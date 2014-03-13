@@ -34,7 +34,7 @@ var ventanilla = require('ventanilla');
 var config = require('./config.json');
 
 var hardware = {};
-initVentanilla(app);
+initVentanilla(app,hardware);
 
 
 
@@ -87,9 +87,8 @@ function initVentanilla(app){
 *   - j: the uid of the sensor
 */
 function sendData(req,hardware,uid,sensor){
-  console.log(uid);
   return sensor.on('data', function(){
-    req.io.broadcast('uid'+uid.uid,this.output(this.value));
+    req.io.broadcast('uid'+uid,this.output(this.value));
   });
 }
 
@@ -98,27 +97,5 @@ app.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-/*function initRoutes(config,cb){
-  var routes = {};
-  //routes.uid0 = uidArduino(0,0);
-  //routes.uid1 = uidArduino(1,0);
-  return cb(routes);
-}
-*/
-/*
-function uidArduino(id,boardId){
-  console.log('set route for uid'+id +' on board ' + boardId);
-  var routing = function(req){
-    try{
-      hardware.arduinoBoards[boardId][id].on('data', function(){
-        console.log(id);
-        req.io.broadcast('uid'+id,this.output(this.value));
-      });
-    }catch(e){
-      console.log('Error: '+e);
-    };
-  };
-  return routing;
-}*/
 
 
