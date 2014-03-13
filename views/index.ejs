@@ -6,6 +6,7 @@
   </head>
   <body>
     <%=title%>
+    <button onclick="registerSensor(0,1,'LD35','A1')">Register</button>
     <div id="display">
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -13,21 +14,6 @@
     <script>
     // Ventanilla Script
      var io =  io.connect();;
-      io.on('uid0', function(data) {
-        $('#uid0').html(data.celsius);
-      });
-
-
-  
-    function createModule(uid,moduleType){
-      return square('Temperature','uid'+uid);
-    }
-    function subscribeToBlock(uid){
-      io.on('uid'+uid, function(data) {
-        $('#uid'+uid).html(data.celsius);
-      });
-    }
-
 
     //init UI
     $(document).ready(function(){
@@ -36,56 +22,69 @@
     });
 
   function initVentanilla(){
-    //get config
-    $.get('/config',function(config){
-      $('#display').html(gatherModules(config));
-    });
-
+    registerSensor(0,0,'LD35','A0')
   }
 
-/* Gather Modules: 
-*  gathers all modules from config and 
-*  writes them as html
+function registerSensor(boardId,uid,type,pin,freq){
+  createSensor(boardId,uid,type,pin,freq,function(){
+    subscribeToBlock(uid);
+    return $('#display').append(square('Temperature','uid'+uid));
+  });
+}
+function subscribeToBlock(uid){
+  log("Subscribe to socket "+uid);
+  io.on('uid'+uid, function(data) {
+    log(uid);
+    $('.data.uid'+uid).html(data.celsius);
+  });
+}
+function createSensor(boardId,uid,type,pin,freq,cb){
+  log("Create Sensor "+uid);
+  var sensor = new Sensor(uid,type,pin,freq);
+  var interface = new Interface(boardId,"arduino");
+  $.post('/registerSensor',{sensor:sensor,interface:interface},function(err){
+    if(err){
+      log(err);
+    }else{
+      log("Created Sensor "+uid);
+      return cb();
+    }
+  });
+}
+
+
+function log(msg){
+  if(console!=undefined){
+    console.log(msg);
+  }
+}
+
+/* Itemtemplates: 
+*  .square => square duh
+*  .skyscraper => height = 2 * width
+*  .bar => 2 * height = width
+*  over uid the value is set
 */
-function gatherModules(config){
-  console.log(config);
-  var html = "";
-  //test for Arduinoboards
-  if(config.arduinoBoards != null){
-    for(boardIndex in config.arduinoBoards){
-      var board = config.arduinoBoards[boardIndex];
-      for(uid in board.sensors){
-        subscribeToBlock(uid);
-        html += createModule(uid,'LD35');
-      }
-    }
-  }
-  return html;
+var square = function(title,uid){return "<div class=\"item square\"><div class=\"title\">"+title+"</div><div class=\"data "+uid+"\">no values</div></div>";}
+
+var Sensor = function(uid,type,pin,freq){
+  this.uid = uid;
+  this.type = type;
+  this.pin = pin;
+  this.freq = freq;
 }
-function createModule(uid,moduleType){
-  return square('Temperature','uid'+uid);
-}
-function subscribeToBlock(id){
-  io.on('uid'+id, function(data) {
-    $('#uid'+id).html(data.celsius); });
+var Interface = function(uid,type){
+  this.uid = uid;
+  this.type = type;
 }
 
-
-    /* Itemtemplates: 
-    *  .square => square duh
-    *  .skyscraper => height = 2 * width
-    *  .bar => 2 * height = width
-    *  over uid the value is set
-    */
-    var square = function(title,uid){return "<div class=\"item square\"><div class=\"title\">"+title+"</div><div class=\"data\" id=\""+uid+"\">no values</div></div>";}
-
-    /* Template for blocks:
-    *  input: data: gets rendered as html
-    */
-    var type = {};
-    type.LD35 = function(data){
-      return "<div class=\"celsius\">"+data.celsius+"</div><div class=\"voltage\">"+data.voltage+"</div>"
-    }
+/* Template for blocks:
+*  input: data: gets rendered as html
+*/
+var type = {};
+type.LD35 = function(data){
+  return "<div class=\"celsius\">"+data.celsius+"</div><div class=\"voltage\">"+data.voltage+"</div>"
+}
     </script>
   </body>
 </html>
