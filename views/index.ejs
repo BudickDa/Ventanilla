@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ventanilla - Frontend</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <%=title%>
+    <div id="display">
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    // Ventanilla Script
+     var io =  io.connect();;
+      io.on('uid0', function(data) {
+        $('#uid0').html(data.celsius);
+      });
+
+
+  
+    function createModule(uid,moduleType){
+      return square('Temperature','uid'+uid);
+    }
+    function subscribeToBlock(uid){
+      io.on('uid'+uid, function(data) {
+        $('#uid'+uid).html(data.celsius);
+      });
+    }
+
+
+    //init UI
+    $(document).ready(function(){
+      io.emit('block');
+      initVentanilla();
+    });
+
+  function initVentanilla(){
+    //get config
+    $.get('/config',function(config){
+      $('#display').html(gatherModules(config));
+    });
+
+  }
+
+/* Gather Modules: 
+*  gathers all modules from config and 
+*  writes them as html
+*/
+function gatherModules(config){
+  console.log(config);
+  var html = "";
+  //test for Arduinoboards
+  if(config.arduinoBoards != null){
+    for(boardIndex in config.arduinoBoards){
+      var board = config.arduinoBoards[boardIndex];
+      for(uid in board.sensors){
+        subscribeToBlock(uid);
+        html += createModule(uid,'LD35');
+      }
+    }
+  }
+  return html;
+}
+function createModule(uid,moduleType){
+  return square('Temperature','uid'+uid);
+}
+function subscribeToBlock(id){
+  io.on('uid'+id, function(data) {
+    $('#uid'+id).html(data.celsius); });
+}
+
+
+    /* Itemtemplates: 
+    *  .square => square duh
+    *  .skyscraper => height = 2 * width
+    *  .bar => 2 * height = width
+    *  over uid the value is set
+    */
+    var square = function(title,uid){return "<div class=\"item square\"><div class=\"title\">"+title+"</div><div class=\"data\" id=\""+uid+"\">no values</div></div>";}
+
+    /* Template for blocks:
+    *  input: data: gets rendered as html
+    */
+    var type = {};
+    type.LD35 = function(data){
+      return "<div class=\"celsius\">"+data.celsius+"</div><div class=\"voltage\">"+data.voltage+"</div>"
+    }
+    </script>
+  </body>
+</html>
