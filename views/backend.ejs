@@ -5,7 +5,71 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <ul id="blockStorage">
+      <li class="LD35 sensor">LD35 - measures temperature</li>
+    </ul>
+<hr/>
+    <div id="sketch"></div>
+    
+    <script>
+
+    var Sensor = function(uid,type,pin,freq,interface){
+      this.uid = uid;
+      this.type = type;
+      this.pin = pin;
+      this.freq = freq;
+      this.interface = interface;
+    }
+    var Interface = function(uid,type,pins){
+      this.uid = uid;
+      this.type = type;
+      this.pins = pins
+    }
+
+      var boardList = function(interfaces,uid){
+        if(interfaces.length===1){
+          var boardData = interfaces[0].type + ": " + interfaces[0].uid;
+          var selectPin = pin(uid,interfaces[0].pins);
+          return "<div class=\"selectBoard\">Board: "+boardData+"</div><div class=\"selectPin\">"+selectPin+"</div>";
+        }
+      };
+      var pin = function(uid,pins){
+        pinList = "";
+        for(pin in pins){
+          pinList += "<option value=\""+pins[pin]+"\">"+pins[pin]+"</option>";
+        }
+        return "<select id=\""+uid+"\">"+pinList+"</select>";
+      };
+      var sensorTemplate = {};
+      //Template for LD35
+      sensorTemplate.LD35 = function(uid,boardList){return "<div class=\"draggable\" id=\""+uid+"\"><span class=\"title\">LD35</span>"+boardList(interfaces,uid)+"</div>";}
+
+      var interfaces = [];
+      //todo: make this dynamic
+      interfaces.push(new Interface(0,"arduino",["A0","A1","A2"]));
+
+      var blocks = [];
+      function initBackend(){
+        $.getScript("//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js", function (data, textStatus, jqxhr) {
+          initUi();
+        });
+      };
+      function initUi(){
+        $("#blockStorage li").draggable({
+          appendTo: "body",
+          helper: "clone"
+        });
+        $("#sketch").droppable({
+          drop: function(event,ui){
+            blocks.push(new Sensor())
+            $(this).append(sensorTemplate.LD35(blocks.length,boardList));
+          }
+        })
+      }
+
+
+
+    </script>
+    <script async src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" onload="initBackend()"></script>
   </body>
 </html>

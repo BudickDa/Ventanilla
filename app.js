@@ -45,10 +45,10 @@ initVentanilla(app,hardware);
 
 /*Routen*/
 app.get('/', function(req, res){
-  res.render('index', { title: 'Express' });
+  res.render('index');
 });
 app.get('/backend', function(req, res){
-  res.render('index', { title: 'Express' });
+  res.render('backend');
 });
 //register Sensor
 app.post('/registerSensor', function(req, res){
