@@ -44,8 +44,8 @@ initVentanilla(app,hardware);
 }*/
 
 /*Routen*/
-app.get('/', function(req, res){
-  res.render('index');
+app.get('/ui/:uid', function(req, res){
+  res.render('index',{uid: req.param('uid')});
 });
 app.get('/backend', function(req, res){
   res.render('backend');
