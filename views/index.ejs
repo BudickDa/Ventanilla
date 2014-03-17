@@ -1,143 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Ventanilla - Frontend</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
+<head>
+  <title>Ventanilla - Frontend</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
   <body>
-    <button onclick="registerSensor(0,1,'LD35','A1')">Register</button>
-    <div id="display">
-    </div>
+    <div id="display"></div>
+     <div id="data" data-ui="<%= uid %>"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-    var ui = <%= uid %>;
-    // Ventanilla Script
-     var io =  io.connect();
-
-
-    //init UI
-    $(document).ready(function(){
-      io.emit('block');
-      initVentanilla();
-    });
-
-  function initVentanilla(){
-    load(function(blocks,relations){
-      //get sensors of UI
-      var toUi = [];
-      for(i in relations){
-        if(relations[i].target===ui){
-          toUi.push(blocks[relations[i].source]);
-        }
-      }
-      log(toUi);
-      //get stuff to display
-      for(i in relations)
-      registerSensor(0,0,'LD35','A0')
-    });
-  }
-
-function registerSensor(boardId,uid,type,pin,freq){
-  createSensor(boardId,uid,type,pin,freq,function(){
-    subscribeToBlock(uid);
-    return $('#display').append(square('Temperature','uid'+uid));
-  });
-}
-function subscribeToBlock(uid){
-  log("Subscribe to socket "+uid);
-  io.on('uid'+uid, function(data) {
-    log(uid);
-    $('.data.uid'+uid).html(data.celsius);
-  });
-}
-function createSensor(boardId,uid,type,pin,freq,cb){
-  log("Create Sensor "+uid);
-  var sensor = new Sensor(uid,type,pin,freq);
-  var interface = new Interface(boardId,"arduino");
-  $.post('/registerSensor',{sensor:sensor,interface:interface},function(err){
-    if(err){
-      log(err);
-    }else{
-      log("Created Sensor "+uid);
-      return cb();
-    }
-  });
-}
-
-
-function log(msg){
-  if(console!=undefined){
-    console.log(msg);
-  }
-}
-
-function load(cb){
-  var blocks = [];relations = [];
-  if(localStorage.relations!==undefined){
-    relations = JSON.parse(localStorage.relations);
-  }
-  if(localStorage.blocks!==undefined){
-    var blockData = JSON.parse(localStorage.blocks);
-    log(blockData);
-    for(i in blockData){
-      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].type,blockData[i].hardware.type,blockData[i].position);
-      }
-    }
-  log("Data was loaded");
-  return cb(blocks,relations);
-}
-
-/* Itemtemplates: 
-*  .square => square duh
-*  .skyscraper => height = 2 * width
-*  .bar => 2 * height = width
-*  over uid the value is set
-*/
-var square = function(title,uid){return "<div class=\"item square\"><div class=\"title\">"+title+"</div><div class=\"data "+uid+"\">no values</div></div>";}
-
-var Block = function(uid,type,hardwareType,position){
-  this.uid = uid;
-  this.position = position;
-  //defines type of hardware (sensor, actor, interface, logic)
-  this.type = type;
-  //the actual hardware object
-  if(type === "interface"){this.hardware = new Interface(hardwareType);};
-  if(type === "sensor"){this.hardware = new Sensor(hardwareType);};
-  this.setPosition = function(position){this.position = position;save();};
-}
-var Sensor = function(type){
-  this.type = type;
-  this.pin = "";
-  this.freq = 0;
-  //object that has this sensor as input
-  this.output = {};
-  this.setOutput = function(output){this.output = output};
-  this.setFrequenz = function(freq){this.freq = freq};
-  this.setPin = function(pin){this.pin = pin};
-}
-var Interface = function(type){
-  //type of interface(e.g. UI, arduino)
-  this.type = type;
-  if(type === "arduino"){
-    this.input = ["A0","A1","A2"];
-    this.output = [];
-  }
-  if(type === "UI"){
-    this.input = [];
-    this.output = [];
-  }
-}
-
-
-
-/* Template for blocks:
-*  input: data: gets rendered as html
-*/
-var type = {};
-type.LD35 = function(data){
-  return "<div class=\"celsius\">"+data.celsius+"</div><div class=\"voltage\">"+data.voltage+"</div>"
-}
+    <script src="/logicFrontend.js"></script>
     </script>
   </body>
 </html>

@@ -64,6 +64,7 @@ app.post('/registerSensor', function(req, res){
   }
   try{
     ventanilla.registerSensor(hardware,interface,sensor,function(sensor){
+      console.log(sensor);
       sendData(req,hardware,sensor);
       //everything went better than expected
       return res.json(false);
@@ -116,6 +117,7 @@ function initVentanilla(app){
 function sendData(req,hardware,sensor){
   console.log("Register Sensor: "+sensor.uid);
   return sensor.on('data', function(){
+    //console.log(this.output(this.value));
     req.io.broadcast('uid'+sensor.uid,this.output(this.value));
   });
 }
