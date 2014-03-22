@@ -51,24 +51,26 @@ app.get('/backend', function(req, res){
   res.render('backend');
 });
 //register Sensor
-app.post('/registerSensor', function(req, res){
+app.post('/registerBlock', function(req, res){
   try{
-    //Hardwareinterface (only arduino atm) contains the id of the device
-    var interface = req.body.interface;
-    //sensor (only LD35 atm) contains type, pin, frequenz and uid
-    var sensor = req.body.sensor;
+    //Block Object contains all the data we need
+    var block = req.body.block;
+    hardware.blocks[block.uid] = 
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
   try{
-    ventanilla.registerSensor(hardware,interface,sensor,function(sensor){
-      console.log(sensor);
-      sendData(req,hardware,sensor);
-      //everything went better than expected
-      return res.json(false);
-    });
+    if(block.type === 'sensor'){
+      ventanilla.registerSensor(hardware,sensor,function(sensor){
+        console.log(sensor);
+        sendData(req,hardware,sensor);
+        //everything went better than expected
+        return res.json(false);
+      });
+    }
+    else if(block.type === 'interface')
   }catch(e){
     console.log(e);
     return res.json(e);

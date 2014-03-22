@@ -23,13 +23,13 @@ function paintUi(blocks) {
     if (blocks[uiBlock.input[i]].type === "sensor") {
       log(blocks[uiBlock.input[i]]);
       log(blocks[blocks[uiBlock.input[i]].input[0]]);
-      registerSensor(blocks[uiBlock.input[i]], blocks[blocks[uiBlock.input[i]].input[0]])
+      registerBlock(blocks[uiBlock.input[i]]);
     }
   }
 }
 
-function registerSensor(sensor, interface) {
-  createSensor(sensor, interface, function (uid) {
+function registerBlock(block) {
+  createSensor(sensor, function (uid) {
     subscribeToBlock(uid);
     return $("#display").append(square("Temperature", "uid" + uid));
   });
@@ -115,58 +115,7 @@ function load(cb) {
       return "<div class=\"item square\"><div class=\"title\">" + title + "</div><div class=\"data " + uid + "\">no values</div></div>";
     }
 
-  var Block = function (uid, type, name, position) {
-      this.uid = uid;
-      this.position = position;
-      //defines type of hardware (sensor, actor, interface, logic)
-      this.type = type;
-      this.name = name;
-      //the actual hardware object
-      if (type === "interface") {
-        this.hardware = new Interface(name);
-      };
-      if (type === "sensor") {
-        this.hardware = new Sensor();
-      };
-      this.setPosition = function (position) {
-        this.position = position;
-      };
-      this.input = [];
-      this.output = [];
-    }
-  var Sensor = function () {
-      this.pin = "";
-      //frequenz of sending data. Default is every 250ms
-      this.freq = 500;
-      //emits change events when the data has changed 1 Unit
-      this.thresholdt = 1;
-      //object that has this sensor as input
-      this.setFrequenz = function (freq) {
-        this.freq = freq
-      };
-      this.setPin = function (pin) {
-        this.pin = pin
-      };
-      this.setThreshold = function (thresholdt) {
-        this.thresholdt = thresholdt;
-      };
-    }
-  var Interface = function (type) {
-      //type of interface(e.g. UI, arduino)
-      this.type = type;
-      if (type === "arduino") {
-        this.input = ["A0", "A1", "A2"];
-        this.output = [];
-      }
-      if (type === "UI") {
-        this.input = [];
-        this.output = [];
-      }
-    }
-
-
-
-    /* Template for blocks:
+     /* Template for blocks:
      *  input: data: gets rendered as html
      */
   var type = {};

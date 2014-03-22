@@ -6,10 +6,10 @@ var Block = function (uid, type, name, position, hardware) {
     this.name = type;
     //the actual hardware object
     if (type === "interface") {
-      this.hardware = new Interface(hardwareType);
+      this.hardware = new Interface(name);
     };
     if (type === "sensor") {
-      this.hardware = new Sensor(hardwareType);
+      this.hardware = new Sensor(name);
     };
     this.setPosition = function (position) {
       this.position = position;
@@ -17,12 +17,14 @@ var Block = function (uid, type, name, position, hardware) {
     this.input = [];
     this.output = [];
   }
+
 var Sensor = function (type) {
-    this.pin = "";
-    //frequenz of sending data. Default is every 250ms
+    //frequenz of sending data. Default is A0 for now
+    this.pin = "A0";
+    //frequenz of sending data. Default is every 500ms
     this.freq = 500;
     //emits change events when the data has changed 1 Unit
-    this.thresholdt: 1;
+    this.thresholdt = 1;
     //object that has this sensor as input
     this.setFrequenz = function (freq) {
       this.freq = freq
@@ -34,15 +36,12 @@ var Sensor = function (type) {
       this.thresholdt = thresholdt;
     };
   }
+
 var Interface = function (type) {
     //type of interface(e.g. UI, arduino)
     this.type = type;
-    if (type === "arduino") {
-      this.port = ["A0", "A1", "A2"];
-      this.output = [];
-    }
-    if (type === "UI") {
-      this.input = [];
-      this.output = [];
+    this.port = "";
+    this.setPort = function(port){
+      this.port = port;
     }
   }
