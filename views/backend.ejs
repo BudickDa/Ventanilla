@@ -5,7 +5,262 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <ul id="blockStorage">
+      <li class="LD35 sensor" data-type="sensor" data-hardware="LD35">LD35 - measures temperature</li>
+      <li class="UI interface" data-type="interface" data-hardware="UI">UI - displays values</li>
+      <li class="arduino interface" data-type="interface" data-hardware="arduino">Arduino Board - serves as interface for sensors and actors</li>
+    </ul>
+    <button onclick="initLines();">Init Draw</button><button onclick="repaint()">Redraw</button><button onclick="deleteAll()">Delete All</button>
+<hr/>
+    <div id="sketch">
+    </div>
+    <footer id="trash"><span>Trash</span></footer>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="/jquery.jsPlumb-1.5.5-min.js"></script>
+    <script>
+    /*global instance of jsPlumb (JS-Module for drawing lines)*/
+    var instanceJsP;
+    /*comtains all elements in #sketch with .w
+    * Is initilized in initLines()
+    */
+    var windows;
+    /*contains relations between blocks in a relation object*/
+    var relations = [];
+    /*here all the registered blocks are saved*/
+    var blocks = [];
+    function log(msg){
+      console.log(msg);
+    }
+    var Block = function(uid,type,hardwareType,position){
+      this.uid = uid;
+      this.position = position;
+      //defines type of hardware (sensor, actor, interface, logic)
+      this.type = type;
+      //the actual hardware object
+      if(type === "interface"){this.hardware = new Interface(hardwareType);};
+      if(type === "sensor"){this.hardware = new Sensor(hardwareType);};
+      this.setPosition = function(position){this.position = position;save();};
+      save();
+    }
+    var Sensor = function(type){
+      this.type = type;
+      this.pin = "";
+      this.freq = 0;
+      //object that has this sensor as input
+      this.output = {};
+      this.setOutput = function(output){this.output = output};
+      this.setFrequenz = function(freq){this.freq = freq};
+      this.setPin = function(pin){this.pin = pin};
+    }
+    var Interface = function(type){
+      //type of interface(e.g. UI, arduino)
+      this.type = type;
+      if(type === "arduino"){
+        this.input = ["A0","A1","A2"];
+        this.output = [];
+      }
+      if(type === "UI"){
+        this.input = [];
+        this.output = [];
+      }
+    }
+
+
+      var pin = function(uid,pins){
+        pinList = "";
+        for(pin in pins){
+          pinList += "<option value=\""+pins[pin]+"\">"+pins[pin]+"</option>";
+        }
+        return "<select id=\""+uid+"\">"+pinList+"</select>";
+      };
+      var blockTemplate = {};
+      //Template for LD35
+      blockTemplate.LD35 = function(uid){return "<div class=\"block w\" data-uid=\""+uid+"\" id=\"uid"+uid+"\"><span class=\"title\">LD35</span><div class=\"ep\"></div></div>";};
+      //Template for UI
+      blockTemplate.UI = function(uid){return "<div class=\"block w\" data-uid=\""+uid+"\" id=\"uid"+uid+"\"><span class=\"title\">UI</span><span class=\"link\"><a href=\"/ui/"+uid+"\" title=\"zum Frontend\">go to Frontend</a><div class=\"ep\"></div></div>";};
+      //Template for arduino board
+      blockTemplate.arduino = function(uid){return "<div class=\"block w\" data-uid=\""+uid+"\" id=\"uid"+uid+"\"><span class=\"title\">Arduino Board</span><div class=\"ep\"></div></div>";};
+      //todo: comment
+
+
+
+
+      function initBackend(){
+        load(paintUi,initUi);
+        return save();
+      }
+      function paintUi(cb){
+        //write render the blocks from the last session
+        for(uid in blocks){
+          renderBlock(blocks[uid]);
+        }
+        return cb();
+      }
+      function initUi(){
+        $("#blockStorage li").draggable({
+          appendTo: "body",
+          helper: "clone"
+        });
+        $("#sketch").droppable({
+          accept: "#blockStorage li",
+          drop: function(event,ui){
+            var uid = blocks.length;
+            var hardware = ui.helper.context.dataset.hardware;
+            var type = ui.helper.context.dataset.type;
+            var block = new Block(uid,type,hardware,ui.position);
+            console.log(ui.position);
+            blocks[uid] = block;
+            var element = renderBlock(block);
+            save();
+            return initLines();
+          }
+        });
+        /*init trash*/
+        $("#trash").droppable({
+          accept: "#sketch .w.block",
+          drop: function(event,ui){
+            var uid = ui.helper.context.dataset.hardware;
+            blocks[uid] = {};
+            $("#sketch #uid"+uid).remove();
+            log("Block "+uid+" was deleted")
+            save();
+
+          }
+        });
+        jsPlumb.bind("ready", function() {
+          initLines();
+        });
+      }
+
+      function renderBlock(block){
+        $("#sketch").append(blockTemplate[block.hardware.type](block.uid));
+        $("#uid"+block.uid).css(block.position).draggable({
+          scroll: false,
+          drag: function(){
+            instanceJsP.repaintEverything();
+          },
+          stop: dragged
+        });
+        return $("#uid"+block.uid);
+      }
+
+      function dragged(event,ui){
+        log("Block was moved");
+        blocks[ui.helper.context.dataset.uid].setPosition(ui.position);
+        //todo: set z-index...
+
+        //redraw lines
+        return instanceJsP.repaintEverything();
+      }
+
+      function save(){
+        log("Save to local storage");
+        localStorage.blocks = JSON.stringify(blocks);
+        localStorage.relations = JSON.stringify(relations);
+      }
+
+      function load(cb,cb2){
+        if(localStorage.relations!==undefined){
+          relations = JSON.parse(localStorage.relations);
+        }
+        if(localStorage.blocks!==undefined){
+          var blockData = JSON.parse(localStorage.blocks);
+          log(blockData);
+          for(i in blockData){
+            blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].type,blockData[i].hardware.type,blockData[i].position);
+            }
+          }
+        log("Data was loaded");
+        return cb(cb2);
+      }
+
+      function deleteAll(){
+        blocks = [];
+        $("#sketch").html("");
+        log("Delete all...");
+        return save();
+      }
+
+      
+    
+      function repaint(){
+        instanceJsP.repaintEverything();
+      }
+
+      $(document).ready(initBackend);
+
+      function initLines(){
+        log("Initilize connections...")
+        instanceJsP = drawLines();
+
+        /*empty relations array to avoid data duplication*/
+        var tmp = relations;
+        relations = [];
+        /*paint connections*/
+        for(i in tmp){
+          log("Paint connetion: "+i);
+          instanceJsP.connect({ source: "uid"+tmp[i].source, target: "uid"+tmp[i].target});
+        }
+      }
+
+/*draw lines*/
+var drawLines = function(){
+  // setup some defaults for jsPlumb.  
+    var instance = jsPlumb.getInstance({
+    Endpoint : ["Dot", {radius:2}],
+    HoverPaintStyle : {strokeStyle:"#1e8151", lineWidth:2 },
+    ConnectionOverlays : [
+      [ "Arrow", { 
+        location:1,
+        id:"arrow",
+                  length:14,
+                  foldback:0.8
+      } ],
+              [ "Label", { label:"FOO", id:"label", cssClass:"aLabel" }]
+    ],
+    Container:"sketch"
+  });
+  //get blocks from UI into global windows object
+  windows = jsPlumb.getSelector("#sketch .w");
+  instance.bind("click", function(c) { 
+    instance.detach(c); 
+  });
+  instance.bind("connection", function(info) {
+    info.connection.getOverlay("label").setLabel(info.connection.id);
+    relations.push({source: $(info.source).data('uid'), target: $(info.target).data('uid')});
+    return save();
+ });
+
+  // suspend drawing and initialise.
+  instance.doWhileSuspended(function() {
+                  
+    // make each ".ep" div a source and give it some parameters to work with.  here we tell it
+    // to use a Continuous anchor and the StateMachine connectors, and also we give it the
+    // connector's paint style.  note that in this demo the strokeStyle is dynamically generated,
+    // which prevents us from just setting a jsPlumb.Defaults.PaintStyle.  but that is what i
+    // would recommend you do. Note also here that we use the 'filter' option to tell jsPlumb
+    // which parts of the element should actually respond to a drag start.
+    instance.makeSource(windows, {
+      filter:".ep",        // only supported by jquery
+      anchor:"Continuous",
+      connector:[ "StateMachine", { curviness:20 } ],
+      connectorStyle:{ strokeStyle:"#5c96bc", lineWidth:2, outlineColor:"transparent", outlineWidth:4 },
+      maxConnections:5,
+      onMaxConnections:function(info, e) {
+        alert("Maximum connections (" + info.maxConnections + ") reached");
+      }
+    });            
+
+    instance.makeTarget(windows, {
+      dropOptions:{ hoverClass:"dragHover" },
+      anchor:"Continuous"
+    });
+  });
+
+  return instance;
+}
+    </script>
+
   </body>
 </html>
