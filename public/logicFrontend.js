@@ -29,7 +29,7 @@ function paintUi(blocks) {
 }
 
 function registerBlock(block) {
-  createSensor(sensor, function (uid) {
+  createBlock(block, function (uid) {
     subscribeToBlock(uid);
     return $("#display").append(square("Temperature", "uid" + uid));
   });
@@ -42,16 +42,15 @@ function subscribeToBlock(uid) {
   });
 }
 
-function createSensor(sensor, interface, cb) {
-  $.post("/registerSensor", {
-    sensor: sensor,
-    interface: interface
+function createBlock(block, cb) {
+  $.post("/registerBlock", {
+    block: block,
   }, function (err) {
     if (err) {
       log(err);
     } else {
-      log("Created Sensor " + sensor.uid);
-      return cb(sensor.uid);
+      log("Created Sensor " + block.uid);
+      return cb(block.uid);
     }
   });
 }

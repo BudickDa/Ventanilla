@@ -1,9 +1,9 @@
-var Block = function (uid, type, name, position, hardware) {
+var Block = function (uid, type, name, position) {
     this.uid = uid;
     this.position = position;
     //defines type of hardware (sensor, actor, interface, logic)
     this.type = type;
-    this.name = type;
+    this.name = name;
     //the actual hardware object
     if (type === "interface") {
       this.hardware = new Interface(name);

@@ -126,6 +126,3 @@ function sendData(req,hardware,sensor){
 
 /*Make app listen*/
 
-
-
-
