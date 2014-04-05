@@ -9,84 +9,8 @@
      <div id="data" data-ui="<%= uid %>"></div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-<<<<<<< HEAD
     <script src="/ventanillaObjects.js"></script>
+    <script src="/Theme/blockFrontend.js"></script>
     <script src="/logicFrontend.js"></script>
-=======
-    <script>
-    // Ventanilla Script
-     var io =  io.connect();;
-
-    //init UI
-    $(document).ready(function(){
-      io.emit('block');
-      initVentanilla();
-    });
-
-  function initVentanilla(){
-    //get config
-    $.get('/config',function(config){
-      $('#display').html(gatherModules(config));
-    });
-  }
-
-/* Gather Modules: 
-*  gathers all modules from config and 
-*  writes them as html
-*/
-function gatherModules(config){
-  log(config);
-  var html = "";
-  //test for Arduinoboards
-  if(config.arduinoBoards != null){
-    log("Found Arduino Boards");
-    for(boardIndex in config.arduinoBoards){
-      log("Init Arduino Board "+boardIndex);
-      var board = config.arduinoBoards[boardIndex];
-      log("Init Sensors:");
-      for(uid in board.sensors){
-        log("Init Sensor Uid: "+uid);
-        subscribeToBlock(uid);
-        html += createModule(uid,'LD35');
-      }
-    }
-  }
-  return html;
-}
-function createModule(uid,moduleType){
-  return square('Temperature','uid'+uid);
-}
-function subscribeToBlock(uid){
-  log("Subscribe to socket "+uid);
-  io.on('uid'+uid, function(data) {
-    log(uid);
-    $('#uid'+uid).html(data.celsius);
-  });
-}
-
-
-function log(msg){
-  if(console!=undefined){
-    console.log(msg);
-  }
-}
-
-/* Itemtemplates: 
-*  .square => square duh
-*  .skyscraper => height = 2 * width
-*  .bar => 2 * height = width
-*  over uid the value is set
-*/
-var square = function(title,uid){return "<div class=\"item square\"><div class=\"title\">"+title+"</div><div class=\"data\" id=\""+uid+"\">no values</div></div>";}
-
-/* Template for blocks:
-*  input: data: gets rendered as html
-*/
-var type = {};
-type.LD35 = function(data){
-  return "<div class=\"celsius\">"+data.celsius+"</div><div class=\"voltage\">"+data.voltage+"</div>"
-}
->>>>>>> master
-    </script>
   </body>
 </html>
