@@ -55,22 +55,19 @@ app.post('/registerBlock', function(req, res){
   try{
     //Block Object contains all the data we need
     var block = req.body.block;
-    hardware.blocks[block.uid] = 
+    hardware.blocks[block.uid] = block;
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
   try{
-    if(block.type === 'sensor'){
-      ventanilla.registerSensor(hardware,sensor,function(sensor){
-        console.log(sensor);
-        sendData(req,hardware,sensor);
-        //everything went better than expected
-        return res.json(false);
-      });
-    }
-    else if(block.type === 'interface')
+    ventanilla.registerBlock(block,function(block){
+      console.log(block);
+      sendData(req,block);
+      //everything went better than expected
+      return res.json(false);
+    });
   }catch(e){
     console.log(e);
     return res.json(e);
