@@ -1,56 +1,39 @@
+uid,ui.position,type,name,system,new Sensor(pin,freq,treshold)
+var Block = function (uid,position,type,name,system,hardware,input) {
+  this.uid = uid;
+  this.position = position;
+  //defines type of hardware (sensor, actor, interface, logic)
+  this.type = type;
+  this.name = name;
+  this.system = system;    
+  //the actual hardware object
+  this.hardware = hardware;
+  this.input = input;
+}
 
-var Sensor = function (type,pin,freq,threshold) {
-    //frequenz of sending data. Default is A0 for now
-    this.pin = pin;
-    //frequenz of sending data. Default is every 500ms
-    this.freq = freq;
-    //emits change events when the data has changed 1 Unit
-    this.threshold = threshold;
-    //object that has this sensor as input
-    this.setFrequenz = function (freq) {
-      this.freq = freq
-    };
-    this.setPin = function (pin) {
-      this.pin = pin
-    };
-    this.setThreshold = function (threshold) {
-      this.thresholdt = thresholdt;
-    };
-  }
+var Sensor = function (pin,freq,threshold) {
+  //frequenz of sending data.
+  this.pin = pin;
+  //frequenz of sending data.
+  this.freq = freq;
+  //emits change events when the data has changed
+  this.threshold = threshold;
+}
 
-var ArduinoBoard = function (type,port) {
-    //type of interface(e.g. UI, arduino)
-    this.type = type;
+var ArduinoUno = function (type,port) {
     this.port = port;
     this.setPort = function(port){
       this.port = port;
     }
   }
 
-var Ui = function() {
-  
+var Ui = function() {  
 }
 
 
-var Block = function (uid, type, name, position, input) {
-    this.uid = uid;
-    this.position = position;
-    //defines type of hardware (sensor, actor, interface, logic)
-    this.type = type;
-    this.name = name;
-    //the actual hardware object
-    if (type === "ArduinoBoard") {
-      this.hardware = new ArduinoBoard(port);
-    };
-    if (type === "Ui") {
-      this.hardware = new Ui();
-    };
-    if (type === "Sensor") {
-      this.hardware = new Sensor(type,pin,freq,thresholdt);
-    };
-    this.setPosition = function (position) {
-      this.position = position;
-    };
-    this.input = input;
-  }
 
+
+/*global helper functions*/
+function log(msg){
+  console.log(msg);
+}
