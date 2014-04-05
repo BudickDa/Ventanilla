@@ -3,14 +3,10 @@ var blockTemplateBackend = {};
 
 //Template for LD35
 blockTemplateBackend.LD35 = function (uid, index) {
-  return 
-            "<div class=\"block w\" data-index=\"" + index + "\" data-uid=\"" + uid + "\" id=\"uid" + uid + "\">"+
-              +"<div class=\"ep left\"></div>"+
-              +"<span class=\"title\">LD35</span>"+
-            +"</div>";
+  return "<div class=\"block w\" data-index=\"" + index + "\" data-uid=\"" + uid + "\" id=\"uid" + uid + "\"><div class=\"ep left\"></div><span class=\"title\">LD35</span></div>";
 };
 //Template for UI
-blockTemplateBackend.UI = function (uid, index) {
+blockTemplateBackend.Ui = function (uid, index) {
   return "<div class=\"block w\" data-index=\"" + index + "\" data-uid=\"" + uid + "\" id=\"uid" + uid + "\"><span class=\"title\">UI</span><span class=\"link\"><a href=\"/ui/" + uid + "\" title=\"zum Frontend\">go to Frontend</a><div class=\"ep\"></div></div>";
 };
 //Template for arduino board

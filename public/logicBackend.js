@@ -9,7 +9,8 @@ function initBackend() {
 function paintUi(cb) {
   //write render the blocks from the last session
   for (i in blocks) {
-    renderBlock(blocks[i], i);
+    renderBlock(blocks[i]);
+    createBlock(blocks[i], cb);
   }
   return cb();
 }
@@ -28,45 +29,37 @@ function initUi() {
       var name = ui.helper.context.dataset.name;
       var type = ui.helper.context.dataset.type;
       //uid, position, type, name, system, hardware, input
-      if (type === "sensor") {
-        //pin,freq,treshold
+      if (type === "Sensor") {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold));
-      } else if (type === "interface") {
+        var block = new Block(uid, ui.position, blocks.length, type, name, system, new Sensor(pin, freq, treshold));
+      } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Interface(system, port));
+        var block = new Block(uid, ui.position, blocks.length,type, name, system, new ArduinoUno(port));
+      } else if (type === "Ui") {
+        var port = ui.helper.context.dataset.port;
+        var block = new Block(uid, ui.position, blocks.length,type, name, system, new Ui());
       } else {
         log("Error: Type is not supported")
         return initLines();
       }
 
       blocks.push(block);
+      createBlock(block, cb);
       var element = renderBlock(block);
       save();
       return initLines();
     }
   }); /*init trash*/
-  $("#trash").droppable({
-    accept: "#sketch .w.block",
-    drop: function (event, ui) {
-      var uid = ui.helper.context.dataset.hardware;
-      blocks[uid] = {};
-      $("#sketch #uid" + uid).remove();
-      log("Block " + uid + " was deleted")
-      save();
-
-    }
-  });
 
   jsPlumb.bind("ready", function () {
     initLines();
   });
 }
 
-function renderBlock(block, index) {
-  $("#sketch").append(blockTemplate[block.name](block.uid, index));
+function renderBlock(block) {
+  $("#sketch").append(blockTemplateBackend[block.name](block.uid, block.index));
   $("#uid" + block.uid).css(block.position).draggable({
   scroll: false,
   drag: function () {
@@ -78,10 +71,10 @@ function renderBlock(block, index) {
 }
 
 function dragged(event, ui) {
-log("Block was moved");
-blocks[ui.helper.context.dataset.index].position = ui.position;
-save();
-return instanceJsP.repaintEverything();
+  log("Block was moved");
+  blocks[ui.helper.context.dataset.index].position = ui.position;
+  save();
+  return instanceJsP.repaintEverything();
 }
 
 
