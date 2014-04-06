@@ -8,9 +8,18 @@ function initBackend() {
 
 function paintUi(cb) {
   //write render the blocks from the last session
+  //Interfaces have an higher priority
+  for(i in blocks){
+    if(blocks[i]){
+      renderBlock(blocks[i]);
+      createBlock(blocks[i], cb);
+    }
+  }
   for (i in blocks) {
-    renderBlock(blocks[i]);
-    createBlock(blocks[i], cb);
+    if(){
+      renderBlock(blocks[i]);
+      createBlock(blocks[i], cb);
+    }
   }
   return cb();
 }
@@ -45,7 +54,7 @@ function initUi() {
         return initLines();
       }
 
-      blocks.push(block);
+      blocks[uid] = block;
       createBlock(block, cb);
       var element = renderBlock(block);
       save();
@@ -59,7 +68,7 @@ function initUi() {
 }
 
 function renderBlock(block) {
-  $("#sketch").append(blockTemplateBackend[block.name](block.uid, block.index));
+  $("#sketch").append(blockTemplateBackend[block.name](block.uid));
   $("#uid" + block.uid).css(block.position).draggable({
   scroll: false,
   drag: function () {
@@ -72,7 +81,7 @@ function renderBlock(block) {
 
 function dragged(event, ui) {
   log("Block was moved");
-  blocks[ui.helper.context.dataset.index].position = ui.position;
+  blocks[ui.helper.context.dataset.uid].position = ui.position;
   save();
   return instanceJsP.repaintEverything();
 }

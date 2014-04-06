@@ -18,7 +18,7 @@ function initVentanilla() {
 function paintUi(blocks) {
   var uiBlock = blocks[ui];
   for(i in uiBlock.input){
-    registerRoute(blocks[getIndex(blocks[uiBlock.input[i]].uid]);
+    registerRoute(blocks[blocks[uiBlock.input[i]].uid]);
   }
 }
 

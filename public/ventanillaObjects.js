@@ -1,9 +1,7 @@
-var Block = function (uid,position,index,type,name,system,hardware,input) {
+var Block = function (uid,position,type,name,system,hardware,input) {
   this.uid = uid;
   //position of block in backend
   this.position = position;
-  //the index value in blocks array. Is set on load.
-  this.index = index;
   //defines type of hardware (sensor, actor, interface, logic)
   this.type = type;
   this.name = name;
@@ -11,6 +9,8 @@ var Block = function (uid,position,index,type,name,system,hardware,input) {
   //the actual hardware object
   this.hardware = hardware;
   this.input = input;
+
+  this.
 }
 
 var Sensor = function (pin,freq,threshold) {
@@ -47,17 +47,6 @@ function log(msg){
   console.log(msg);
 }
 
-/*
-* gets index of block from uid
-*/
-function getIndex(uid){
-  for(i in blocks){
-    if(blocks[i].uid === uid){
-      return i;
-    }
-  }
-  return -1;
-}
 
 /*
 * Loads relation and block data from localStorage..
@@ -75,8 +64,7 @@ function load(cb,cb2){
       }else{
         var input = blockData[i].input;
       }
-      var index = blocks.length;
-      blocks.push(new Block(blockData[i].uid,blockData[i].position,index,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,input));
+      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,input);
     }
   }
   log("Data was loaded");
