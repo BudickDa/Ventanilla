@@ -1,22 +1,21 @@
 /*global instance of jsPlumb (JS-Module for drawing lines)*/
-var instanceJsP;
+var instanceJsP = {};
 
 function initBackend() {
-  load(paintUi, initUi);
-  return save();
+  return load(paintUi, initUi);
 }
 
 function paintUi(cb) {
   //write render the blocks from the last session
-  //Interfaces have an higher priority
+  //Interfaces and logic then everything else have an higher priority
   for(i in blocks){
-    if(blocks[i]){
+    if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
       renderBlock(blocks[i]);
       createBlock(blocks[i], cb);
     }
   }
   for (i in blocks) {
-    if(){
+    if(blocks[i].type==="Sensor"||blocks[i].type==="Actor"){
       renderBlock(blocks[i]);
       createBlock(blocks[i], cb);
     }
@@ -32,7 +31,8 @@ function initUi() {
   $("#sketch").droppable({
     accept: "#blockStorage li",
     drop: function (event, ui) {
-      var uid = blocks.length + new Date().getTime();
+      var uid = Math.floor(new Date().getTime()+Math.random(1337));
+      console.log(uid);
       var hardware = ui.helper.context.dataset.hardware;
       var system = ui.helper.context.dataset.system;
       var name = ui.helper.context.dataset.name;
@@ -42,52 +42,49 @@ function initUi() {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, blocks.length, type, name, system, new Sensor(pin, freq, treshold));
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[]);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, blocks.length,type, name, system, new ArduinoUno(port));
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[]);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, blocks.length,type, name, system, new Ui());
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),[]);
       } else {
         log("Error: Type is not supported")
         return initLines();
       }
-
       blocks[uid] = block;
-      createBlock(block, cb);
-      var element = renderBlock(block);
-      save();
-      return initLines();
+      createBlock(block);
+      return renderBlock(block,initJsPlumb);
     }
-  }); /*init trash*/
-
-  jsPlumb.bind("ready", function () {
-    initLines();
   });
+  return initJsPlumb();
 }
 
-function renderBlock(block) {
+function renderBlock(block,cb) {
   $("#sketch").append(blockTemplateBackend[block.name](block.uid));
   $("#uid" + block.uid).css(block.position).draggable({
-  scroll: false,
-  drag: function () {
-    instanceJsP.repaintEverything();
-  },
-  stop: dragged
+    scroll: false,
+    drag: function () {
+      instanceJsP.repaintEverything();
+    },
+    stop: dragged
   });
-  return $("#uid" + block.uid);
+  save(blocks,relations);
+  if(cb!==undefined){
+    return cb();
+  }
 }
 
 function dragged(event, ui) {
   log("Block was moved");
   blocks[ui.helper.context.dataset.uid].position = ui.position;
-  save();
+  save(blocks,relations);
   return instanceJsP.repaintEverything();
 }
 
 
-$(document).ready(initBackend);
+
 
 function createBlock(block, cb) {
   $.post("/registerBlock", {
@@ -104,39 +101,39 @@ function createBlock(block, cb) {
 
 
 
-function setInput(uidSource, uidTarget) {
-  for (i in blocks) {
-    if (blocks[i].uid === uidTarget) {
-      blocks[i].input.push(uidSource);
-    }
-  }
-}
-
-
-function repaint(i) {
+function repaint() {
   jsPlumb.bind("ready", function () {
-    initLines();
+    instanceJsP = drawLines();
   });
 }
-function initLines() {
-  log("Initilize connections...")
-  instanceJsP = drawLines();
-
-  /*empty relations array to avoid data duplication*/
-  var tmp = relations;
-  relations = []; /*paint connections*/
-  for (i in tmp) {
-    log("Paint connetion: " + i);
-    //setInput(tmp[i].source,tmp[i].target);
-    instanceJsP.connect({
-      source: "uid" + tmp[i].source,
-      target: "uid" + tmp[i].target
-    });
-  }
+function initJsPlumb() {
+  jsPlumb.bind("ready", function () {
+    log("Initilize JsPlumb")
+    instanceJsP = drawLines();
+    return drawConnections(instanceJsP)    
+  });
+}
+function drawConnections(instance){
+    /*empty relations array to avoid data duplication*/
+    var tmp = relations;
+    relations = []; /*paint connections*/
+    for (i in tmp) {
+      log("Paint connection: " + i);
+log({
+        source: "uid" + tmp[i].source,
+        target: "uid" + tmp[i].target
+      });
+      //setInput(tmp[i].source,tmp[i].target);
+      instance.connect({
+        source: "uid" + tmp[i].source,
+        target: "uid" + tmp[i].target
+      });
+    }
 }
 
 /*draw lines*/
 var drawLines = function () {
+  log(blocks);
   // setup some defaults for jsPlumb.  
   var instance = jsPlumb.getInstance({
     Endpoint: ["Dot",
@@ -171,13 +168,12 @@ var drawLines = function () {
     instance.detach(c);
   });
   instance.bind("connection", function (info) {
-    info.connection.getOverlay("label").setLabel(info.connection.id);
-    setInput($(info.source).data('uid'), $(info.target).data('uid'));
+    blocks[$(info.source).data('uid')].input.push($(info.target).data('uid'));
     relations.push({
       source: $(info.source).data('uid'),
       target: $(info.target).data('uid')
     });
-    return save();
+    return save(blocks,relations);
   });
   instance.doWhileSuspended(function () {
     instance.makeSource(windows, {
@@ -207,6 +203,8 @@ var drawLines = function () {
       anchor: "Continuous"
     });
   });
-
   return instance;
 }
+
+/*start when dom is ready*/
+$(document).ready(initBackend);

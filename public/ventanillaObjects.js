@@ -9,8 +9,6 @@ var Block = function (uid,position,type,name,system,hardware,input) {
   //the actual hardware object
   this.hardware = hardware;
   this.input = input;
-
-  this.
 }
 
 var Sensor = function (pin,freq,threshold) {
@@ -37,7 +35,7 @@ var Ui = function() {
 /*contains relations between blocks in a relation object*/
 var relations = [];
 /*here all the registered blocks are saved*/
-var blocks = [];
+var blocks = {};
 
 /*
 * Logs Message into console.
@@ -75,8 +73,9 @@ function load(cb,cb2){
 * Saves blocks and relation to localStorage
 * Todo: Check if localStorage is available.
 */
-function save(){
+function save(blocks,relations){
   log("Save to local storage");
+  log(JSON.stringify(relations));
   localStorage.blocks = JSON.stringify(blocks);
   localStorage.relations = JSON.stringify(relations);
 }
@@ -89,5 +88,5 @@ function deleteAll() {
   relations = [];
   $("#sketch").html("");
   log("Delete all...");
-  return save();
+  return save(blocks,relations);
 }
