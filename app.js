@@ -62,11 +62,22 @@ app.post('/registerBlock', function(req, res){
     return res.json(e);
   }
   try{
-    ventanilla.registerBlock(block,function(block,uid){
-      console.log(block);
-      blocks[uid] = block;
-      blocks[uid].uid = uid;
-      sendData(blockRoute,blocks[uid]);
+    if(blocks[block.uid]!==undefined){
+      console.log("Update block "+block.uid);
+
+      if(block.input !== blocks[block.uid].input && blocks[block.uid].input !==undefined){
+        blocks[block.uid].input = block.input;
+      }
+      return res.json(false);
+    }
+  }
+  catch(e){
+    console.log(e);
+    return res.json(e);
+  }
+  try{
+    ventanilla.registerBlock(block,function(uid){
+      sendData(blocks[uid]);
       //everything went better than expected
       return res.json(false);
     });
@@ -76,22 +87,23 @@ app.post('/registerBlock', function(req, res){
   }
 });
 
-
-
-
-
-/*
-* Return route of arduino module. 
-* Input:
-*   - hardware: hardware object created by ventanilla
-*   - i: the uid of the board
-*   - j: the uid of the sensor
-*/
-function sendData(req,block){
-  console.log("Register Sensor: "+block.uid);
-  return block.on('data', function(){
-    req.io.broadcast('uid'+block.uid,this.output(this.value));
-  });
+function sendData(block){
+  console.log("Generating route...")
+  try{
+    /*
+    * the new block object contains the old block object as object... this is a little bit akward.
+    */
+    console.log("Get Data from Block: "+block.block.uid);
+    if(block.block.type==="Sensor"){
+      console.log("This Block is a sensor...");
+      return block.on('data', function(){
+        console.log(this.output(this.value));
+        app.io.broadcast('uid'+block.uid,this.output(this.value));
+      });
+    }
+  }catch(e){
+    console.log("Error in sendData in app.js: " + e);
+  }
 }
 
 

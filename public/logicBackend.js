@@ -1,26 +1,23 @@
-/*global instance of jsPlumb (JS-Module for drawing lines)*/
-var instanceJsP = {};
-
 function initBackend() {
-  return load(paintUi, initUi);
+  initJsPlumb(paintUi, initUi);
 }
 
-function paintUi(cb) {
+function paintUi(initUi) {
   //write render the blocks from the last session
   //Interfaces and logic then everything else have an higher priority
   for(i in blocks){
     if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
-      renderBlock(blocks[i]);
-      createBlock(blocks[i], cb);
+      renderBlock(blocks[i], repaint);
+      updateBlock(blocks[i]);
     }
   }
   for (i in blocks) {
     if(blocks[i].type==="Sensor"||blocks[i].type==="Actor"){
-      renderBlock(blocks[i]);
-      createBlock(blocks[i], cb);
+      renderBlock(blocks[i], repaint);
+      updateBlock(blocks[i]);
     }
   }
-  return cb();
+  return initUi(drawConnections);
 }
 
 function initUi() {
@@ -55,32 +52,33 @@ function initUi() {
       }
       blocks[uid] = block;
       createBlock(block);
-      return renderBlock(block,initJsPlumb);
+      return renderBlock(block,repaint);
     }
   });
-  return initJsPlumb();
+  return drawConnections();
 }
 
 function renderBlock(block,cb) {
   $("#sketch").append(blockTemplateBackend[block.name](block.uid));
+
   $("#uid" + block.uid).css(block.position).draggable({
     scroll: false,
-    drag: function () {
-      instanceJsP.repaintEverything();
-    },
     stop: dragged
   });
-  save(blocks,relations);
+  
   if(cb!==undefined){
-    return cb();
+    setTimeout(function(){
+        return cb();
+    },1000);
   }
+  return save(blocks,relations);
 }
 
 function dragged(event, ui) {
   log("Block was moved");
   blocks[ui.helper.context.dataset.uid].position = ui.position;
   save(blocks,relations);
-  return instanceJsP.repaintEverything();
+  return instance.repaintEverything();
 }
 
 
@@ -94,7 +92,9 @@ function createBlock(block, cb) {
       log(err);
     } else {
       log("Created Block " + block.uid);
-      return cb(block.uid);
+      if(cb!==undefined){
+        return cb(block.uid);
+      }
     }
   });
 }
@@ -112,111 +112,9 @@ function updateBlock(block){
   });
 }
 
-
-
 function repaint() {
-  jsPlumb.bind("ready", function () {
-    instanceJsP = drawLines();
-  });
-}
-function initJsPlumb() {
-  jsPlumb.bind("ready", function () {
-    log("Initilize JsPlumb")
-    instanceJsP = drawLines();
-    return drawConnections(instanceJsP)    
-  });
-}
-function drawConnections(instance){
-    /*empty relations array to avoid data duplication*/
-    var tmp = relations;
-    relations = []; /*paint connections*/
-    for (i in tmp) {
-      log("Paint connection: " + i);
-log({
-        source: "uid" + tmp[i].source,
-        target: "uid" + tmp[i].target
-      });
-      //setInput(tmp[i].source,tmp[i].target);
-      instance.connect({
-        source: "uid" + tmp[i].source,
-        target: "uid" + tmp[i].target
-      });
-    }
-}
-
-/*draw lines*/
-var drawLines = function () {
-  log(blocks);
-  // setup some defaults for jsPlumb.  
-  var instance = jsPlumb.getInstance({
-    Endpoint: ["Dot",
-    {
-      radius: 2
-    }],
-    HoverPaintStyle: {
-      strokeStyle: "#1e8151",
-      lineWidth: 2
-    },
-    ConnectionOverlays: [
-  ["Arrow",
-    {
-      location: 1,
-      id: "arrow",
-      length: 14,
-      foldback: 0.8
-    }],
-          ["Label",
-    {
-      label: "FOO",
-      id: "label",
-      cssClass: "aLabel"
-    }]
-  ],
-    Container: "sketch"
-  });
-  //get blocks from UI into global windows object
-  windows = jsPlumb.getSelector("#sketch .w");
-  instance.bind("click", function (c) {
-    log(c);
-    instance.detach(c);
-  });
-  instance.bind("connection", function (info) {
-    blocks[$(info.target).data('uid')].input.push($(info.source).data('uid'));
-    relations.push({
-      source: $(info.source).data('uid'),
-      target: $(info.target).data('uid')
-    });
-    return updateBlock(blocks[$(info.source).data('uid')]);
-  });
-  instance.doWhileSuspended(function () {
-    instance.makeSource(windows, {
-      filter: ".ep",
-      // only supported by jquery
-      anchor: "Continuous",
-      connector: ["StateMachine",
-      {
-        curviness: 20
-      }],
-      connectorStyle: {
-        strokeStyle: "#5c96bc",
-        lineWidth: 2,
-        outlineColor: "transparent",
-        outlineWidth: 4
-      },
-      maxConnections: 5,
-      onMaxConnections: function (info, e) {
-        alert("Maximum connections (" + info.maxConnections + ") reached");
-      }
-    });
-
-    instance.makeTarget(windows, {
-      dropOptions: {
-        hoverClass: "dragHover"
-      },
-      anchor: "Continuous"
-    });
-  });
-  return instance;
+  log("Repaint view...")
+  redrawLines();
 }
 
 /*start when dom is ready*/

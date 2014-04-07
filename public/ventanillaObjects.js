@@ -28,12 +28,15 @@ var Ui = function() {
 }
 
 
-
-
 /*global helper functions*/
 
 /*contains relations between blocks in a relation object*/
 var relations = [];
+
+var relation = function(source,target){
+  this.source = source;
+  this.target = target;
+}
 /*here all the registered blocks are saved*/
 var blocks = {};
 
@@ -50,7 +53,7 @@ function log(msg){
 * Loads relation and block data from localStorage..
 * Todo: Check if localStorage is available.
 */
-function load(cb,cb2){
+function load(paintUi, initUi,drawConnections){
   if(localStorage.relations!==undefined){
     relations = JSON.parse(localStorage.relations);
   }
@@ -66,7 +69,7 @@ function load(cb,cb2){
     }
   }
   log("Data was loaded");
-  return cb(cb2);
+  return paintUi(initUi,drawConnections);
 }
 
 /*
