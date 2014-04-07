@@ -62,10 +62,11 @@ app.post('/registerBlock', function(req, res){
     return res.json(e);
   }
   try{
-    ventanilla.registerBlock(block,function(block){
+    ventanilla.registerBlock(block,function(block,uid){
       console.log(block);
-      blocks[block.uid] = block;
-      sendData(blockRoute,block);
+      blocks[uid] = block;
+      blocks[uid].uid = uid;
+      sendData(blockRoute,blocks[uid]);
       //everything went better than expected
       return res.json(false);
     });
@@ -86,11 +87,10 @@ app.post('/registerBlock', function(req, res){
 *   - i: the uid of the board
 *   - j: the uid of the sensor
 */
-function sendData(req,hardware,sensor){
-  console.log("Register Sensor: "+sensor.uid);
-  return sensor.on('data', function(){
-    //console.log(this.output(this.value));
-    req.io.broadcast('uid'+sensor.uid,this.output(this.value));
+function sendData(req,block){
+  console.log("Register Sensor: "+block.uid);
+  return block.on('data', function(){
+    req.io.broadcast('uid'+block.uid,this.output(this.value));
   });
 }
 

@@ -93,8 +93,21 @@ function createBlock(block, cb) {
     if (err) {
       log(err);
     } else {
-      log("Created Sensor " + block.uid);
+      log("Created Block " + block.uid);
       return cb(block.uid);
+    }
+  });
+}
+
+function updateBlock(block){
+  $.post("/registerBlock", {
+    block: block,
+  }, function (err) {
+    if (err) {
+      log(err);
+    } else {
+      log("Updated Block " + block.uid);
+      return save(blocks,relations);
     }
   });
 }
@@ -168,12 +181,12 @@ var drawLines = function () {
     instance.detach(c);
   });
   instance.bind("connection", function (info) {
-    blocks[$(info.source).data('uid')].input.push($(info.target).data('uid'));
+    blocks[$(info.target).data('uid')].input.push($(info.source).data('uid'));
     relations.push({
       source: $(info.source).data('uid'),
       target: $(info.target).data('uid')
     });
-    return save(blocks,relations);
+    return updateBlock(blocks[$(info.source).data('uid')]);
   });
   instance.doWhileSuspended(function () {
     instance.makeSource(windows, {
