@@ -97,7 +97,6 @@ function sendData(block){
     if(block.block.type==="Sensor"){
       console.log("This Block is a sensor...");
       return block.on('data', function(){
-        console.log(this.output(this.value));
         app.io.broadcast('uid'+block.uid,this.output(this.value));
       });
     }

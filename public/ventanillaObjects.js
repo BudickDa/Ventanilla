@@ -49,6 +49,24 @@ function log(msg){
 }
 
 
+
+/*
+* Loads block of ui
+* Todo: Check if localStorage is available.
+*/
+function loadUiBlock(uid,cb){
+  if(localStorage.blocks!==undefined){
+    var blockData = JSON.parse(localStorage.blocks);
+    var blocks = {};
+    for(i in blockData){
+      if(blockData[i].uid === uid){
+        var uiBlock = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,blockData[i].input);
+      }
+      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,blockData[i].input);
+    }
+    return cb(uiBlock, blocks)
+  }
+}
 /*
 * Loads relation and block data from localStorage..
 * Todo: Check if localStorage is available.
@@ -91,5 +109,29 @@ function deleteAll() {
   relations = [];
   $("#sketch").html("");
   log("Delete all...");
+  return save(blocks,relations);
+}
+
+/*
+* Deletes block.
+*/
+function deleteBlock(uid){
+  /*Destroy relationship*/
+  for(i in relations){
+    if(relations[i].source === uid || relations[i].target === uid){
+      relations.splice(i,1);
+      if(relations[i].source === uid){
+        for(j in blocks[relations[i].target].input){
+          if(blocks[relations[i].target].input[j] === uid){
+            blocks[relations[i].target].input.splice(j,1);
+          }
+        }
+      }
+    }
+  }
+
+  /*delte block from blocks*/
+  delete blocks[uid];
+  $("#uid"+uid).remove();
   return save(blocks,relations);
 }

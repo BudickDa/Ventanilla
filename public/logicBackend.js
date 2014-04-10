@@ -25,6 +25,10 @@ function initUi() {
     appendTo: "body",
     helper: "clone"
   });
+
+  $("#sketch").on("click", ".deleteButton", function(){
+    deleteBlock($(this).parent().data("uid"));
+  });
   $("#sketch").droppable({
     accept: "#blockStorage li",
     drop: function (event, ui) {

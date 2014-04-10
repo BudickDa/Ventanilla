@@ -1,30 +1,29 @@
-var ui = $("#data").data("ui");
+var ui;
 var io = io.connect();
 
 //init UI
 $(document).ready(function () {
+  ui = $("#data").data("ui");
   io.emit("block");
   initVentanilla();
 });
 
 function initVentanilla() {
-  load(function (blocks, relations) {
-    //get sensors of UI
-    getConnectedBlocks(ui, blocks, relations);
-    return paintUi(blocks);
+  loadUiBlock(ui, function(block,blocks){
+    //get input of block of UI
+    return paintUi(block,blocks);
   });
 }
 
-function paintUi(blocks) {
-  var uiBlock = blocks[ui];
-  for(i in uiBlock.input){
-    registerRoute(blocks[blocks[uiBlock.input[i]].uid]);
+function paintUi(block,blocks) {
+  for(i in block.input){
+    registerRoute(block.input[i],blocks[block.input[i]].name);
   }
 }
 
-function registerRoute(block) {
-  $("#display").append(square("Temperature", "uid" + block.uid));
-  return subscribeToBlock(block.uid,block.name);
+function registerRoute(uid,name) {
+  $("#display").append(square(name, "uid" + uid));
+  return subscribeToBlock(uid,name);
 }
 
 function subscribeToBlock(uid,name) {
