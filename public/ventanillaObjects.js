@@ -78,12 +78,7 @@ function load(paintUi, initUi,drawConnections){
   if(localStorage.blocks!==undefined){
     var blockData = JSON.parse(localStorage.blocks);
     for(i in blockData){
-      if(blockData[i].input===undefined){
-        var input = [];
-      }else{
-        var input = blockData[i].input;
-      }
-      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,input);
+      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,[]);
     }
   }
   log("Data was loaded");
@@ -96,7 +91,8 @@ function load(paintUi, initUi,drawConnections){
 */
 function save(blocks,relations){
   log("Save to local storage");
-  log(JSON.stringify(relations));
+  log(blocks);
+  log(relations);
   localStorage.blocks = JSON.stringify(blocks);
   localStorage.relations = JSON.stringify(relations);
 }
@@ -105,10 +101,15 @@ function save(blocks,relations){
 * Deletes everything.
 */
 function deleteAll() {
+  var uids = [];
+  for(i in blocks){
+    uids.push(blocks[i].uid);
+  }
   blocks = [];
   relations = [];
   $("#sketch").html("");
   log("Delete all...");
+  $.post('delete', {uids: uids});
   return save(blocks,relations);
 }
 
@@ -133,5 +134,6 @@ function deleteBlock(uid){
   /*delte block from blocks*/
   delete blocks[uid];
   $("#uid"+uid).remove();
+  $.post('delete', {uids: [uid]});
   return save(blocks,relations);
 }

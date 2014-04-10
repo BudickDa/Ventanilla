@@ -90,7 +90,7 @@ function dragged(event, ui) {
 
 function createBlock(block, cb) {
   $.post("/registerBlock", {
-    block: block,
+    blocks: [block],
   }, function (err) {
     if (err) {
       log(err);
@@ -105,7 +105,7 @@ function createBlock(block, cb) {
 
 function updateBlock(block){
   $.post("/registerBlock", {
-    block: block,
+    blocks: [block],
   }, function (err) {
     if (err) {
       log(err);

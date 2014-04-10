@@ -45,46 +45,97 @@ app.get('/backend', function(req, res){
   res.render('backend');
 });
 
-//todo: comment
-var blockRoute;
-app.io.route('block',function(req){
-  blockRoute = req;
+app.post('sync', function(req, res){
+  try{
+    //Block Object contains all the data we need
+    var postBlocks = req.body.blocks;
+  }
+  catch(e){
+    console.log(e);
+    return res.json(e);
+  }
+  for(i in postBlocks){
+    var block = postBlocks[i];
+    try{
+      if(blocks[block.uid]===block){
+        console.log("Syncing Block " + blocks[block.uid].uid);
+        ventanilla.registerBlock(block,function(uid){
+          sendData(blocks[uid]);
+        });
+      }
+    }catch(e){
+      console.log(e);
+      return res.json(e);
+    }
+    return res.json(false);
+  }
+
+
+});
+
+
+
+
+//delete sensors
+app.post('/delete', function(req, res){
+  var msg = "All blocks deleted.";
+  try{
+    //Block Object contains all the data we need
+    var uids = req.body.uids;
+  }
+  catch(e){
+    console.log(e);
+    msg = e;
+    return res.json(msg);
+  }
+  for(i in uids){
+    try{
+      delete blocks[uids[i]];
+      console.log("Block " + uids[i] + " deleted.")
+    }catch(e){
+      msg = e;
+    }
+  }
+  return res.json(msg);
 });
 
 //register Sensor
 app.post('/registerBlock', function(req, res){
   try{
     //Block Object contains all the data we need
-    var block = req.body.block;
+    var postBlocks = req.body.blocks;
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
-  try{
-    if(blocks[block.uid]!==undefined){
-      console.log("Update block "+block.uid);
-
-      if(block.input !== blocks[block.uid].input && blocks[block.uid].input !==undefined){
-        blocks[block.uid].input = block.input;
+  for(i in postBlocks){
+    var block = postBlocks[i];
+    try{
+      if(blocks[block.uid]!==undefined){
+        console.log("Update block "+block.uid);
+        if(block.input !== blocks[block.uid].input && blocks[block.uid].input !==undefined){
+          blocks[block.uid].input = block.input;
+        }
       }
-      return res.json(false);
+    }
+    catch(e){
+      console.log(e);
+      return res.json(e);
+    }
+    try{
+      console.log("Register block "+block.uid);
+      ventanilla.registerBlock(block,function(uid){
+        sendData(blocks[uid]);
+        //everything went better than expected
+        return res.json(false);
+      });
+    }catch(e){
+      console.log(e);
+      return res.json(e);
     }
   }
-  catch(e){
-    console.log(e);
-    return res.json(e);
-  }
-  try{
-    ventanilla.registerBlock(block,function(uid){
-      sendData(blocks[uid]);
-      //everything went better than expected
-      return res.json(false);
-    });
-  }catch(e){
-    console.log(e);
-    return res.json(e);
-  }
+  return res.json(false);
 });
 
 function sendData(block){
