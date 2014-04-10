@@ -146,15 +146,28 @@ function sendData(block){
     */
     console.log("Get Data from Block: "+block.block.uid);
     if(block.block.type==="Sensor"){
-      console.log("This Block is a sensor...");
-      return block.on('data', function(){
-        app.io.broadcast('uid'+block.uid,this.output(this.value));
-      });
+      console.log("This Block is a sensor.");
+      return sendSensorData(block);
     }
   }catch(e){
     console.log("Error in sendData in app.js: " + e);
   }
 }
 
+function sendSensorData(block){
+  try{
+    block.on('data', function(){
+      try{
+        app.io.broadcast('uid'+block.uid,this.output(this.value));
+      }catch(e){
+        console.log("Error at sendSensorData in app.js: " + e);
+        return false;
+      }
+    });
+  }catch(e){
+    console.log("Error at sendSensorData in app.js: " + e);
+    return false;
+  }
 
+}
 
