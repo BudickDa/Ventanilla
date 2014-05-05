@@ -1,4 +1,4 @@
-var Block = function (uid,position,type,name,system,hardware,input) {
+var Block = function (uid,position,type,name,system,hardware,input,unique) {
   this.uid = uid;
   //position of block in backend
   this.position = position;
@@ -9,6 +9,8 @@ var Block = function (uid,position,type,name,system,hardware,input) {
   //the actual hardware object
   this.hardware = hardware;
   this.input = input;
+  /*Blocks are unique for example: ArduinoBoards*/
+  this.unique = unique;
 }
 
 var Sensor = function (pin,freq,threshold) {
@@ -78,7 +80,7 @@ function load(paintUi, initUi,drawConnections){
   if(localStorage.blocks!==undefined){
     var blockData = JSON.parse(localStorage.blocks);
     for(i in blockData){
-      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,[]);
+      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,[],blockData[i].unique);
     }
   }
   log("Data was loaded");
@@ -101,6 +103,9 @@ function save(blocks,relations){
 * Deletes everything.
 */
 function deleteAll() {
+  if(!printWarning("This will delete all blocks and requires the application to be restarted. Do you really want to do this?")){
+    return save(blocks,relations);
+  }
   var uids = [];
   for(i in blocks){
     uids.push(blocks[i].uid);
@@ -136,4 +141,11 @@ function deleteBlock(uid){
   $("#uid"+uid).remove();
   $.post('delete', {uids: [uid]});
   return save(blocks,relations);
+}
+
+function printError(msg){
+  alert(msg);
+}
+function printWarning(msg){
+  return confirm(msg);
 }

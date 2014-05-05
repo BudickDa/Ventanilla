@@ -43,13 +43,13 @@ function initUi() {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[]);
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],false);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[]);
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],true);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),[]);
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],false);
       } else {
         log("Error: Type is not supported")
         return initLines();
@@ -63,7 +63,8 @@ function initUi() {
 }
 
 function renderBlock(block,cb) {
-  $("#sketch").append(blockTemplateBackend[block.name](block.uid));
+  var blockTemplate = new blockTemplates[block.name](block.uid);
+  $("#sketch").append(blockTemplate.backendTemplate,block.unique);
 
   $("#uid" + block.uid).css(block.position).draggable({
     scroll: false,

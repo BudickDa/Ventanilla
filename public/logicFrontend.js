@@ -31,8 +31,9 @@ function registerRoute(uid,name) {
 
 function subscribeToBlock(uid,name) {
   log("Subscribe to socket " + uid);
+  var blockTemplate = new blockTemplates[name](uid);
   io.on("uid" + uid, function (data) {
-    $(".data.uid" + uid).html(blockTemplateFrontend[name](data));
+    $(".data.uid" + uid).html(blockTemplate.frontendTemplate(data));
   });
 }
 
