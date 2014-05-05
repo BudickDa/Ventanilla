@@ -6,6 +6,7 @@ $(document).ready(function () {
   ui = $("#data").data("ui");
   io.emit("block");
   initVentanilla();
+  return setInterval(initVentanilla,1000);
 });
 
 function initVentanilla() {
@@ -22,8 +23,10 @@ function paintUi(block,blocks) {
 }
 
 function registerRoute(uid,name) {
-  $("#display").append(square(name, "uid" + uid));
-  return subscribeToBlock(uid,name);
+  if($(".uid"+uid).length===0){
+    $("#display").append(square(name, "uid" + uid));
+    return subscribeToBlock(uid,name);
+  }
 }
 
 function subscribeToBlock(uid,name) {
@@ -32,6 +35,8 @@ function subscribeToBlock(uid,name) {
     $(".data.uid" + uid).html(blockTemplateFrontend[name](data));
   });
 }
+
+
 
 
 

@@ -1,25 +1,18 @@
 var instance = {};
 var windows = {};
+var arrowConfig = {
+    filter: ".ep",
+    connector: [ "Straight", { curviness: 0 } ],
+    startpoints:"Rectangle",
+    endpoint:"Rectangle",
+    paintStyle:{ fillStyle:"gray" },
+    Container: "sketch"
+  };
 function initJsPlumb(paintUi, initUi) {
   jsPlumb.bind("ready", function () {
     log("Initilize JsPlumb")
     windows = jsPlumb.getSelector("#sketch .w");
-    instance = jsPlumb.getInstance({
-      Endpoint: ["Dot", {radius: 2}],
-      HoverPaintStyle: {
-        strokeStyle: "#1e8151",
-        lineWidth: 2
-      },
-      ConnectionOverlays: [
-        ["Arrow",{
-          location: 1,
-          id: "arrow",
-          length: 14,
-          foldback: 0.8
-        }]
-      ],
-      Container: "sketch"
-    });
+    instance = jsPlumb.getInstance(arrowConfig);
   /*Click connection deletes connection*/
   instance.bind("click", function (c) {
     for(i in relations){
@@ -56,7 +49,7 @@ function drawConnections(){
   for (i in tmp) {
     log("Line between " + tmp[i].source + " and " + tmp[i].target);
     var relationship = new relation("uid" + tmp[i].source, "uid" + tmp[i].target);
-    instance.connect(relationship);
+    instance.connect(relationship,arrowConfig);
   }
 
   return save(blocks,relations);
@@ -67,25 +60,8 @@ function redrawLines(){
   log("Redraw Lines...");
   /*get new elements*/
   windows = jsPlumb.getSelector("#sketch .w");
-  instance.makeSource(windows, {
-    filter: ".ep",
-    anchor: ["Continuous", { faces:["right"] } ],
-    connector: [ "Straight", { curviness: 0 } ],
-    connectorStyle: {
-      strokeStyle: "#5c96bc",
-      lineWidth: 2,
-      outlineColor: "transparent",
-      outlineWidth: 4
-    },
-    maxConnections: 20,
-    onMaxConnections: function (info, e) {
-      alert("Maximum connections (" + info.maxConnections + ") reached");
-    }
-  });
-  instance.makeTarget(windows, {
-    dropOptions:{ hoverClass:"dragHover" },
-    anchor: ["Continuous", { faces:["right","left"] } ]
-  });
+  instance.makeSource(windows, arrowConfig);
+  instance.makeTarget(windows, arrowConfig);
 
   return instance;
 }
