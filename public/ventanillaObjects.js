@@ -23,10 +23,13 @@ var Sensor = function (pin,freq,threshold) {
 }
 
 var ArduinoUno = function (port) {
-    this.port = port;
-  }
+  this.port = port;
+}
 
 var Ui = function() {  
+}
+var Port = function(port) {
+  this.port
 }
 
 

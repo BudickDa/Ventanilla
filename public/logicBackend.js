@@ -29,6 +29,13 @@ function initUi() {
   $("#sketch").on("click", ".deleteButton", function(){
     deleteBlock($(this).parent().data("uid"));
   });
+
+  $("#sketch").on("click", ".deleteButtonUnique", function(){
+    if(printWarning("If you delete this block, you have to restart your application. Do you want to continue?")){
+      deleteBlock($(this).parent().data("uid"));
+    }
+  });
+
   $("#sketch").droppable({
     accept: "#blockStorage li",
     drop: function (event, ui) {
@@ -38,18 +45,19 @@ function initUi() {
       var system = ui.helper.context.dataset.system;
       var name = ui.helper.context.dataset.name;
       var type = ui.helper.context.dataset.type;
+      var unique = ui.helper.context.dataset.unique;
       //uid, position, type, name, system, hardware, input
       if (type === "Sensor") {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],false);
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],unique);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],true);
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],unique);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],false);
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique);
       } else {
         log("Error: Type is not supported")
         return initLines();
@@ -63,8 +71,8 @@ function initUi() {
 }
 
 function renderBlock(block,cb) {
-  var blockTemplate = new blockTemplates[block.name](block.uid);
-  $("#sketch").append(blockTemplate.backendTemplate,block.unique);
+  var blockTemplate = new blockTemplates[block.name](block);
+  $("#sketch").append(blockTemplate.backendTemplate);
 
   $("#uid" + block.uid).css(block.position).draggable({
     scroll: false,
