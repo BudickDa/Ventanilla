@@ -131,4 +131,12 @@ function repaint() {
 }
 
 /*start when dom is ready*/
-$(document).ready(initBackend);
+$(document).ready(function(){
+  /*paint available blocks*/
+  log(blockTemplates);
+  for(i in blockTemplates){
+    var menueBlock = new blockTemplates[i]();
+    $("#blockStorage").append(menueBlock.frontendMenue);
+  }
+  return initBackend()
+});

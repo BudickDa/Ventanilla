@@ -1,5 +1,6 @@
 var ui;
 var io = io.connect();
+var blockUis = {};
 
 //init UI
 $(document).ready(function () {
@@ -10,20 +11,21 @@ $(document).ready(function () {
 });
 
 function initVentanilla() {
+
   loadUiBlock(ui, function(block,blocks){
-    //get input of block of UI
     return paintUi(block,blocks);
   });
 }
 
 function paintUi(block,blocks) {
+  blockUis = [];
   for(i in block.input){
     registerRoute(block.input[i],blocks[block.input[i]].name);
   }
 }
 
 function registerRoute(uid,name) {
-  if($(".uid"+uid).length===0){
+  if($("#upperuid"+uid).length===0){
     $("#display").append(square(name, "uid" + uid));
     return subscribeToBlock(uid,name);
   }
