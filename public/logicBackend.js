@@ -46,6 +46,8 @@ function initUi() {
       var name = ui.helper.context.dataset.name;
       var type = ui.helper.context.dataset.type;
       var unique = ui.helper.context.dataset.unique;
+
+      log(type);
       //uid, position, type, name, system, hardware, input
       if (type === "Sensor") {
         var pin = "A0";
@@ -58,9 +60,9 @@ function initUi() {
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
         var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique);
-      } else {
-        log("Error: Type is not supported")
-        return initLines();
+      } else if (type === "Logic") {
+        var logicName = ui.helper.context.dataset.name;
+        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique);
       }
       blocks[uid] = block;
       createBlock(block);

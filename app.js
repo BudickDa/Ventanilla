@@ -125,7 +125,7 @@ app.post('/registerBlock', function(req, res){
     }
     try{
       console.log("Register block "+block.uid);
-      ventanilla.registerBlock(block,function(uid){
+      ventanilla.registerBlock(block,blocks,function(uid){
         sendData(blocks[uid]);
         //everything went better than expected
         return res.json(false);
@@ -150,7 +150,6 @@ function sendData(block){
       return sendSensorData(block);
     }
     else{
-      blocks[block.uid].value = block.output
     }
   }catch(e){
     console.log("Error in sendData in app.js: " + e);

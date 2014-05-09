@@ -32,7 +32,9 @@ var Port = function(port) {
   this.port
 }
 
-
+var Logic = function(logicType) {
+  this.logicType = logicType;
+}
 /*global helper functions*/
 
 /*contains relations between blocks in a relation object*/

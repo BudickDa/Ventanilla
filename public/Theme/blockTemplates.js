@@ -47,6 +47,16 @@ blockTemplates.ArduinoUno = function(block) {
 
 
 
+//Template for logic add
+blockTemplates.Add = function(block) {
+  if(block!==undefined){
+    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Add</span><div class=\"ep\"></div>",block.unique);
+  }
+   this.frontendMenue = function(){
+    return "<li class=\"logic logic\" data-type=\"Logic\" data-name=\"Add\" data-system=\"Logic\" data-unique=\"false\">Logic:Add</li>";
+  }
+};
+
 
 
 /* Outline-Templates for frontend:
