@@ -43,14 +43,6 @@ blockTemplates.ArduinoUno = function(block) {
     return "<li class=\"arduino interface\" data-type=\"ArduinoUno\" data-name=\"ArduinoUno\" data-system=\"arduino\" data-port=\"/dev/ttyACM0\" data-unique=\"true\">Arduino Uno Board 1</li>";
   }
 };
-blockTemplates.Port = function(block) {
-  if(block!==undefined){
-    this.backendTemplate = backendOuter(block.uid, "<span class=\"title\">Port "+block.hardware.port+"</span><div class=\"ep\"></div>",block.unique);
-  }
-  this.frontendMenue = function(){
-    return "<li class=\"arduino string\" data-type=\"Port\" data-name=\"Port\" data-system=\"arduino\" data-port=\"/dev/ttyACM0\" data-unique=\"true\">Port: /dev/ttyACM0</li>";
-  }
-};
 
 
 

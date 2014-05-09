@@ -149,6 +149,9 @@ function sendData(block){
       console.log("This Block is a sensor.");
       return sendSensorData(block);
     }
+    else{
+      blocks[block.uid].value = block.output
+    }
   }catch(e){
     console.log("Error in sendData in app.js: " + e);
   }
@@ -158,6 +161,7 @@ function sendSensorData(block){
   try{
     block.on('data', function(){
       try{
+        blocks[block.uid].value = this.output(this.value);
         app.io.broadcast('uid'+block.uid,this.output(this.value));
       }catch(e){
         console.log("Error at sendSensorData in app.js: " + e);
