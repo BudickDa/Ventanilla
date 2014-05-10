@@ -16,7 +16,8 @@ var backendOuter = function(uid,blockTemplate,unique){
 //Template for LD35
 blockTemplates.LD35 = function(block) {
   if(block!==undefined){
-    this.backendTemplate = backendOuter(block.uid, "<span class=\"title\">LD35</span><div class=\"ep\"></div>",block.unique);
+    log(block);
+    this.backendTemplate = backendOuter(block.uid, "<span class=\"title\">LD35</span><div class=\"output\"><div class=\"ep\" data-output=\"voltage\">Voltage</div><div class=\"ep\" data-output=\"celsius\">Celsius</div></div>",block.unique);
   }
   this.frontendTemplate = function(data) {
     return "<div class=\"celsius\">" + data.celsius + "</div><div class=\"voltage\">" + data.voltage + "</div>"
@@ -37,7 +38,7 @@ blockTemplates.Ui = function(block) {
 //Template for arduino board
 blockTemplates.ArduinoUno = function(block) {
   if(block!==undefined){
-    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Arduino Board</span><div class=\"ep\"></div>",block.unique);
+    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Arduino Board</span><div class=\"output\"><div class=\"ep\" data-output=\"port\">Port</div></div></div>",block.unique);
   }
    this.frontendMenue = function(){
     return "<li class=\"arduino interface\" data-type=\"ArduinoUno\" data-name=\"ArduinoUno\" data-system=\"arduino\" data-port=\"/dev/ttyACM0\" data-unique=\"true\">Arduino Uno Board 1</li>";
@@ -50,7 +51,7 @@ blockTemplates.ArduinoUno = function(block) {
 //Template for logic add
 blockTemplates.Add = function(block) {
   if(block!==undefined){
-    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Add</span><div class=\"ep\"></div>",block.unique);
+    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Add</span><div class=\"ep\" data-output=\"result\">Result</div></div>",block.unique);
   }
    this.frontendMenue = function(){
     return "<li class=\"logic logic\" data-type=\"Logic\" data-name=\"Add\" data-system=\"Logic\" data-unique=\"false\">Logic:Add</li>";
