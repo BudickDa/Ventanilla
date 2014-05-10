@@ -1,3 +1,9 @@
+/*Input object defines the uid of the input block and the kind of input, that has to be extracted from the data object*/
+var Input = function(inputUid,inputKind){
+  this.uid = inputUid;
+  this.kind = inputKind;
+}
+
 var Block = function (uid,position,type,name,system,hardware,input,unique) {
   this.uid = uid;
   //position of block in backend
