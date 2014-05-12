@@ -6,18 +6,34 @@
     <link rel='stylesheet' href='/Theme/style.css' />
   </head>
   <body>
-    <ul id="blockStorage">
-    </ul>
-    <button onclick="initLines();">Init Draw</button><button onclick="repaint()">Redraw</button><button onclick="deleteAll()">Delete All</button>
-<hr/>
+    <div id="availableBlocks">
+      <ul id="blockStorage">
+      </ul>
+      <button onclick="deleteAll()">Delete All</button>
+      <div class="toogleAvailableBlocks close">Close</div>
+    </div>
+
+    <div class="toogleAvailableBlocks open">Open Blockmenu</div>
+
     <div id="sketch">
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <script src="/jquery.jsPlumb-1.5.5-min.js"></script>
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    <script src="/wireit/build/wireit-loader/wireit-loader.js"></script>
+    <script>YUI_config.groups.wireit.base = '/wireit/build/';</script>
+    <script type="text/javascript" src="/wireit/lib/inputex/src/loader.js"></script>
+    <script>YUI_config.groups.inputex.base = '/wireit/lib/inputex/src/';</script>
     <script src="/lines.js"></script>
     <script src="/Theme/blockTemplates.js"></script>
     <script src="/ventanillaObjects.js"></script>
     <script src="/logicBackend.js"></script>
+    <script>
+    /*ui stuff...*/
+      $(".toogleAvailableBlocks").on("click",function(){
+        $("#availableBlocks").toggle();
+      })
+
+    </script>
   </body>
 </html>

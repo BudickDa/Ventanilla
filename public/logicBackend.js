@@ -93,7 +93,6 @@ function dragged(event, ui) {
   log("Block was moved");
   blocks[ui.helper.context.dataset.uid].position = ui.position;
   save(blocks,relations);
-  return instance.repaintEverything();
 }
 
 
