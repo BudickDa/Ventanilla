@@ -1,5 +1,5 @@
 function initBackend() {
-  initJsPlumb(paintUi, initUi);
+  load(paintUi, initUi);
 }
 
 function paintUi(initUi) {
@@ -36,40 +36,7 @@ function initUi() {
     }
   });
 
-  $("#sketch").droppable({
-    accept: "#blockStorage li",
-    drop: function (event, ui) {
-      var uid = Math.floor(new Date().getTime()+Math.random(1337));
-      console.log(uid);
-      var hardware = ui.helper.context.dataset.hardware;
-      var system = ui.helper.context.dataset.system;
-      var name = ui.helper.context.dataset.name;
-      var type = ui.helper.context.dataset.type;
-      var unique = ui.helper.context.dataset.unique;
-
-      log(type);
-      //uid, position, type, name, system, hardware, input
-      if (type === "Sensor") {
-        var pin = "A0";
-        var freq = 250;
-        var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],unique);
-      } else if (type === "ArduinoUno") {
-        var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],unique);
-      } else if (type === "Ui") {
-        var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique);
-      } else if (type === "Logic") {
-        var logicName = ui.helper.context.dataset.name;
-        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique);
-      }
-      blocks[uid] = block;
-      createBlock(block);
-      return renderBlock(block,repaint);
-    }
-  });
-  return drawConnections();
+  return paintBlocks();
 }
 
 function renderBlock(block,cb) {
