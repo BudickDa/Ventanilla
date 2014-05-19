@@ -1,41 +1,70 @@
+var uiConfig = {
+
+}
+
 function paintBlocks() {
   YUI({filter: 'raw'}).use('arrow-wire', 'inout-container', 'form-container', 'inputex-group', 'inputex-email', 'inputex-select', 'inputex-checkbox', 'inputex-radio', 'inputex-list', 'inputex-url', 'json', function(Y) {
+    blockLayer = Y.one('#sketch');
 
-    var layerEl = Y.one('#sketch');
-
-    var mygraphic = new Y.Graphic({render: "#sketch"});
+    sketch = new Y.Graphic({render: "#sketch"});
 
     c1 = new Y.InOutContainer({
       children: [
         {
           align: {points:["tl", "lc"]},
           dir: [-1,0],
-          groups: ['in'],
-          graphic: mygraphic
+          groups: ['object'],
+          graphic: sketch
         },
         {
           align: {points:["tl", "rc"]}, dir: [1, 0],
           groups: ['object'],
-          graphic: mygraphic
+          graphic: sketch
+        }
+      ],
+      inputs: ['port'],
+
+      ouputs: ['celsius','voltage'],
+
+      render: blockLayer,
+      xy: [300,150],
+      headerContent: 'LD35',
+    });
+
+    c2 = new Y.InOutContainer({
+      children: [
+        {
+          align: {points:["tl", "lc"]},
+          dir: [-1,0],
+          groups: ['object'],
+          graphic: sketch
         }
       ],
 
-      inputs: ['alright','sound in'],
+      inputs: ['boxes'],
 
-      ouputs: ['result','error'],
+      render: blockLayer,
+      xy: [400,250],
+      headerContent: 'Ui',
+    });
 
-      render: layerEl,
-      xy: [300,150],
-      headerContent: 'Awesome Module',
-
-      resizable: false
-
+    //connect blocks
+    var wire = sketch.addWire({
+       type: Y.StraightWire,
+       stroke: {
+           weight: 4,
+           color: "rgb(173,216,230)"
+       },
+       src: c1,
+       tgt: c2
     });
   });
 }
 
 
 function drawConnections(){
+
+
   log("Paint loaded connections");
   /*empty relations array to avoid data duplication*/
   var tmp = relations;

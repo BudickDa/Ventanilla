@@ -104,7 +104,7 @@ $(document).ready(function(){
   log(blockTemplates);
   for(i in blockTemplates){
     var menueBlock = new blockTemplates[i]();
-    $("#blockStorage").append(menueBlock.frontendMenue);
+    $("#blockStorage").append(menueBlock.backendMenue);
   }
   return initBackend()
 });
