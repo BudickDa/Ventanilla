@@ -1,66 +1,47 @@
 var uiConfig = {
 
 }
-
+var wires = [];
+var containers = [];
 function paintBlocks() {
   YUI({filter: 'raw'}).use('arrow-wire', 'inout-container', 'form-container', 'inputex-group', 'inputex-email', 'inputex-select', 'inputex-checkbox', 'inputex-radio', 'inputex-list', 'inputex-url', 'json', function(Y) {
     blockLayer = Y.one('#sketch');
-
     sketch = new Y.Graphic({render: "#sketch"});
 
-    c1 = new Y.InOutContainer({
-      children: [
-        {
-          align: {points:["tl", "lc"]},
-          dir: [-1,0],
-          groups: ['object'],
-          graphic: sketch
-        },
-        {
-          align: {points:["tl", "rc"]}, dir: [1, 0],
-          groups: ['object'],
-          graphic: sketch
-        }
-      ],
-      inputs: ['port'],
+    containers.push(createContainer(Y));
+    containers.push(createContainer(Y));
 
-      ouputs: ['celsius','voltage'],
 
-      render: blockLayer,
-      xy: [300,150],
-      headerContent: 'LD35',
-    });
+    wires.push(connect(Y, containers[0].item(1), containers[1].item(0)));
+  });
+}
 
-    c2 = new Y.InOutContainer({
-      children: [
-        {
-          align: {points:["tl", "lc"]},
-          dir: [-1,0],
-          groups: ['object'],
-          graphic: sketch
-        }
-      ],
-
-      inputs: ['boxes'],
-
-      render: blockLayer,
-      xy: [400,250],
-      headerContent: 'Ui',
-    });
-
-    //connect blocks
-    var wire = sketch.addWire({
-       type: Y.StraightWire,
+function connect(Y,t1,t2){
+  return sketch.addShape({
+       type: Y.BezierWire,
        stroke: {
            weight: 4,
            color: "rgb(173,216,230)"
        },
-       src: c1,
-       tgt: c2
+       src: t1,
+       tgt: t2
     });
-  });
 }
 
+function createContainer(Y,block){
+  var c = new Y.InOutContainer({
+    children: [
+      { align: {points:["tl", "lc"]} },
+      { align: {points:["tl", "rc"]} }
+    ],
+    width: 350,
+    height: 200,
+    render: blockLayer,
+    xy: [300,150],
+    headerContent: 'LD35',
+  });
+  return c;
+}
 
 function drawConnections(){
 
