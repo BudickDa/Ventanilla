@@ -1,11 +1,63 @@
+/*start when dom is ready*/
+$(document).ready(function(){
+  /*paint available blocks*/
+  log(blockTemplates);
+  for(i in blockTemplates){
+    var menueBlock = new blockTemplates[i]();
+    $("#blockStorage").append(menueBlock.backendMenue);
+  }
+
+  return initWireIt(initBackend);
+});
 function initBackend() {
-  load(paintUi, initUi);
+  /*Make points from menu dragable*/
+  $("#blockStorage li").draggable({
+    appendTo: "body",
+    helper: "clone"
+  });
+  /*this is executed when block is dropped into sketch*/
+  $("#sketch").droppable({
+    accept: "#blockStorage li",
+    drop: function (event, ui) {
+      var uid = Math.floor(new Date().getTime()+Math.random(1337));
+      var hardware = ui.helper.context.dataset.hardware;
+      var system = ui.helper.context.dataset.system;
+      var name = ui.helper.context.dataset.name;
+      var type = ui.helper.context.dataset.type;
+      var unique = ui.helper.context.dataset.unique;
+
+      log(type);
+      //uid, position, type, name, system, hardware, input
+      if (type === "Sensor") {
+        var pin = "A0";
+        var freq = 250;
+        var treshold = 1;
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],unique);
+      } else if (type === "ArduinoUno") {
+        var port = ui.helper.context.dataset.port;
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],unique);
+      } else if (type === "Ui") {
+        var port = ui.helper.context.dataset.port;
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique);
+      } else if (type === "Logic") {
+        var logicName = ui.helper.context.dataset.name;
+        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique);
+      }
+      blocks[uid] = block;
+      return createBlock(block);
+    }
+  });
+
+  load(paintUi);
 }
 
-function paintUi(initUi) {
+function paintUi(blocks,relations) {
   //write render the blocks from the last session
   //Interfaces and logic then everything else have an higher priority
-  for(i in blocks){
+  createBlocks(blocks,relations);
+
+
+  /*for(i in blocks){
     if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
       renderBlock(blocks[i], repaint);
       updateBlock(blocks[i]);
@@ -16,15 +68,14 @@ function paintUi(initUi) {
       renderBlock(blocks[i], repaint);
       updateBlock(blocks[i]);
     }
-  }
-  return initUi(drawConnections);
+  }*/
 }
 
-function initUi() {
-  $("#blockStorage li").draggable({
-    appendTo: "body",
-    helper: "clone"
-  });
+function initUi() {/*
+
+  This has to go into lines at blocks...
+
+
 
   $("#sketch").on("click", ".deleteButton", function(){
     deleteBlock($(this).parent().data("uid"));
@@ -34,31 +85,9 @@ function initUi() {
     if(printWarning("If you delete this block, you have to restart your application. Do you want to continue?")){
       deleteBlock($(this).parent().data("uid"));
     }
-  });
+  });*/
 }
 
-function renderBlock(block,cb) {
-  var blockTemplate = new blockTemplates[block.name](block);
-  $("#sketch").append(blockTemplate.backendTemplate);
-
-  $("#uid" + block.uid).css(block.position).draggable({
-    scroll: false,
-    stop: dragged
-  });
-  
-  if(cb!==undefined){
-    setTimeout(function(){
-        return cb();
-    },1000);
-  }
-  return save(blocks,relations);
-}
-
-function dragged(event, ui) {
-  log("Block was moved");
-  blocks[ui.helper.context.dataset.uid].position = ui.position;
-  save(blocks,relations);
-}
 
 
 
@@ -76,8 +105,9 @@ function createBlock(block, cb) {
       }
     }
   });
+  save(blocks,relations);
+  return createContainer(block);
 }
-
 function updateBlock(block){
   $.post("/registerBlock", {
     blocks: [block],
@@ -91,19 +121,6 @@ function updateBlock(block){
   });
 }
 
-function repaint() {
-  log("Repaint view...")
-  redrawLines();
-}
 
-/*start when dom is ready*/
-$(document).ready(function(){
-  /*paint available blocks*/
-  log(blockTemplates);
-  for(i in blockTemplates){
-    var menueBlock = new blockTemplates[i]();
-    $("#blockStorage").append(menueBlock.backendMenue);
-  }
 
-  return initWireIt(initBackend);
-});
+

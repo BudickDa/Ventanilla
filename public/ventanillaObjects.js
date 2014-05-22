@@ -84,7 +84,7 @@ function loadUiBlock(uid,cb){
 * Loads relation and block data from localStorage..
 * Todo: Check if localStorage is available.
 */
-function load(paintUi, initUi,drawConnections){
+function load(cb){
   if(localStorage.relations!==undefined){
     relations = JSON.parse(localStorage.relations);
   }
@@ -95,7 +95,7 @@ function load(paintUi, initUi,drawConnections){
     }
   }
   log("Data was loaded");
-  return paintUi(initUi,drawConnections);
+  return cb(blocks,relations);
 }
 
 /*

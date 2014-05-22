@@ -14,18 +14,30 @@ function initWireIt(cb) {
   });
 }
 
-function createBlocks(){
-
-  containers[0] = createContainer({name:"LD35",position:[300,150]});
-  containers[1] = createContainer({name:"Ui",position:[850,150]});
-
-  //wires[0] = connect(containers[0].item(1), containers[1].item(0));
-
+function createBlocks(blocks,relations){
+  for(i in blocks){
+    if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
+      createContainer(blocks[i]);
+      updateBlock(blocks[i]);
+    }
+  }
+  for (i in blocks) {
+    if(blocks[i].type==="Sensor"||blocks[i].type==="Actor"){
+      createContainer(blocks[i]);
+      updateBlock(blocks[i]);
+    }
+  }
+  return connectBlocks(relations);
 };
 
+
+function connectBlocks(relations){
+  connect(containers[0].item(1), containers[1].item(0));
+}
+
 function connect(src,tgt){
-  return sketch.addShape({
-     type: wireIntance.BezierWire,
+  var w = myGraphic.addShape({
+     type: Y.BezierWire,
      stroke: {
          weight: 4,
          color: "rgb(173,216,230)"
@@ -33,21 +45,25 @@ function connect(src,tgt){
      src: src,
      tgt: tgt
   });
+  return wires.push(w);
 }
 
 function createContainer(block){
-    var c = new Y.Container({
-      children: [
-        { align: {points:["tl", "lc"]} },
-        { align: {points:["tl", "rc"]} }
-      ],
-      width: 300,
-      height: 400,
-      render: layer,
-      xy: block.position,
-      headerContent: block.name
+  var c = new Y.Container({
+    children: [
+      { align: {points:["tl", "lc"]} },
+      { align: {points:["tl", "rc"]} }
+    ],
+    width: 300,
+    height: 400,
+    render: layer,
+    xy: block.position,
+    headerContent: block.name,
+    onDelete: function(){
+      console.log(block.uid + " was deleted!")
+    }
   });
-  return c;
+  return containers.push(c);
 }
 
 
