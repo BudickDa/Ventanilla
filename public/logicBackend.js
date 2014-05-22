@@ -35,8 +35,6 @@ function initUi() {
       deleteBlock($(this).parent().data("uid"));
     }
   });
-
-  return paintBlocks();
 }
 
 function renderBlock(block,cb) {
@@ -106,5 +104,6 @@ $(document).ready(function(){
     var menueBlock = new blockTemplates[i]();
     $("#blockStorage").append(menueBlock.backendMenue);
   }
-  return initBackend()
+
+  return initWireIt(initBackend);
 });

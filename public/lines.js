@@ -1,116 +1,23 @@
 var uiConfig = {
 
 }
-var wireIntance, blockLayer, sketch;
 var wires = [];
 var containers = [];
+var Y = YUI({filter:'raw'});
 
-function paintBlocks() {
-  /*YUI().use('bezier-wire', 'container', 'image-container', function(Y) {
-    var l = Y.one('#sketch');
-    var s = new Y.Graphic({render: "#sketch"});
-
-    c1 = new Y.Container({
-      children: [
-        { align: {points:["tl", "lc"]} },
-        { align: {points:["tl", "rc"]} }
-      ],
-      width: 350,
-      height: 200,
-      render: l,
-      xy: [300,150],
-      headerContent: 'LD35'
-    });
-
-    c2 = new Y.Container({
-      children: [
-        { align: {points:["tl", "lc"]} },
-        { align: {points:["tl", "rc"]} }
-      ],
-      width: 350,
-      height: 200,
-      render: l,
-      xy: [850,150],
-      headerContent: 'Ui'
-    });*/
-
-
-    //return makeYGlobal(Y,s, l);
-  YUI().use('bezier-wire', 'container', 'image-container', function(Y) {
-
-    var layerEl = Y.one('#sketch');
-
-    var mygraphic = new Y.Graphic({render: "#sketch"});
-
-    c1 = new Y.Container({
-      children: [
-        { align: {points:["tl", "tl"]} },
-        { align: {points:["tl", "bc"]} }
-      ],
-
-      render: layerEl,
-      xy: [200,100],
-      width: 200,
-      height: 100,
-      headerContent: 'headerContent',
-      bodyContent: 'bodyContent',
-      footerContent: 'footerContent'
-    });
-
-    c2 = new Y.Container({
-      children: [
-        {
-          align: {points:["tl", "tl"]},
-          dir: [-1,-1]
-        }
-      ],
-      render: layerEl,
-      xy: [350,200],
-      headerContent: 'sample container',
-      bodyContent: 'bodyContent'
-    });
-    c3 = new Y.Container({
-      children: Y.ContainerBase.EIGHT_POINTS,
-      render: layerEl,
-      width: 200,
-      height: 100,
-      xy: [500,200],
-      headerContent: '9 terminals',
-      bodyContent: 'bodyContent',
-      footerContent: 'footerContent'
-    });
-
-    c5 = new Y.ImageContainer({
-      children: Y.ContainerBase.EIGHT_POINTS,
-      render: layerEl,
-      xy: [700,30],
-      imageUrl: 'http://www.google.fr/images/logos/ps_logo2.png'
-    });
-
-
-    var wire = mygraphic.addShape({
-       type: Y.BezierWire,
-       stroke: {
-           weight: 4,
-           color: "rgb(173,216,230)"
-       },
-       src: c1.item(1),
-       tgt: c2.item(0)
-    });
+function initWireIt(cb) {
+  Y.use('bezier-wire', 'container', 'image-container', function(Y) {
+    layer = Y.one('#sketch');
+    myGraphic = new Y.Graphic();
+    myGraphic.render("#sketch");
+    return cb();
   });
 }
-/*
-function makeYGlobal(Y,s,l){
-  sketch = s;
-  wireIntance = Y;
-  blockLayer = l;
-  return test();
-}
-function test(){
 
-  containers[0] = createContainer();
-  containers[1] = createContainer();
+function createBlocks(){
 
+  containers[0] = createContainer({name:"LD35",position:[300,150]});
+  containers[1] = createContainer({name:"Ui",position:[850,150]});
 
   //wires[0] = connect(containers[0].item(1), containers[1].item(0));
 
@@ -129,19 +36,20 @@ function connect(src,tgt){
 }
 
 function createContainer(block){
-  return new wireIntance.InOutContainer({
-    children: [
-      { align: {points:["tl", "lc"]} },
-      { align: {points:["tl", "rc"]} }
-    ],
-    width: 350,
-    height: 200,
-    render: blockLayer,
-    xy: [300,150],
-    headerContent: 'LD35',
+    var c = new Y.Container({
+      children: [
+        { align: {points:["tl", "lc"]} },
+        { align: {points:["tl", "rc"]} }
+      ],
+      width: 300,
+      height: 400,
+      render: layer,
+      xy: block.position,
+      headerContent: block.name
   });
+  return c;
 }
-*/
+
 
 function drawConnections(){
   log("Paint loaded connections");
