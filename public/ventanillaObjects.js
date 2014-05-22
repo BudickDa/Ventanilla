@@ -147,7 +147,7 @@ function deleteBlock(uid){
     }
   }
 
-  /*delte block from blocks*/
+  /*delete block from blocks*/
   delete blocks[uid];
   $("#uid"+uid).remove();
   $.post('delete', {uids: [uid]});

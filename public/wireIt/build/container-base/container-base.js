@@ -29,7 +29,7 @@ var ContainerBase = Y.Base.create('container-base', Y.Overlay, [Y.WidgetParent, 
       });
 
       this.drag.on('drag:drag', function () {
-         this.redrawAllWires();
+        this.redrawAllWires();
       }, this);
 
       // Make the overlay resizable

@@ -59,8 +59,8 @@ Y.InOutContainer = Y.Base.create("inout-container", Y.Container, [], {
                   "alwaysSrc": true
                });
                this.bodyEl.appendChild(Y.WireIt.cn('div', null, {lineHeight: "30px", textAlign: "right"}, output));
-            }
-            */
+            }*/
+
 
 
       }, '#body-container');

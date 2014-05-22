@@ -1,49 +1,66 @@
 var uiConfig = {
 
 }
+
+var blocks, relations;
+
 var wires = [];
-var containers = [];
+var containers = {};
 var Y = YUI({filter:'raw'});
 
 function initWireIt(cb) {
-  Y.use('bezier-wire', 'container', 'image-container', function(Y) {
-    layer = Y.one('#sketch');
+  Y.use('layer','bezier-wire', 'inout-container', 'image-container', function(Y) {
+    layer = new Y.Layer({
+      render: Y.one('#sketch')
+    });
+    console.log(layer);
     myGraphic = new Y.Graphic();
     myGraphic.render("#sketch");
+
+    layer.on('addChild',function(e){
+      console.log(e);
+    });
+
     return cb();
   });
 }
 
-function createBlocks(blocks,relations){
-  for(i in blocks){
-    if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
+function createBlocks(b,r){
+  blocks = b;
+  for(i in b){
+    if(b[i].type!=="Sensor"&&b[i].type!=="Actor"){
       createContainer(blocks[i]);
       updateBlock(blocks[i]);
     }
   }
-  for (i in blocks) {
-    if(blocks[i].type==="Sensor"||blocks[i].type==="Actor"){
+  for (i in b) {
+    if(b[i].type==="Sensor"||b[i].type==="Actor"){
       createContainer(blocks[i]);
       updateBlock(blocks[i]);
     }
   }
-  return connectBlocks(relations);
+  return connectBlocks(r);
 };
 
 
-function connectBlocks(relations){
-  connect(containers[0].item(1), containers[1].item(0));
+function connectBlocks(r){
+  relations = r;
+  for(i in r){
+    connect(r[i].source,r[i].target);
+  }
 }
 
 function connect(src,tgt){
+  console.log(containers[src]);
+  console.log(containers[tgt]);
   var w = myGraphic.addShape({
-     type: Y.BezierWire,
-     stroke: {
-         weight: 4,
-         color: "rgb(173,216,230)"
-     },
-     src: src,
-     tgt: tgt
+    type: Y.BezierWire,
+    stroke: {
+      weight: 2,
+      color: "rgb(173,216,230)"
+    },
+    src: containers[src].item(1),
+    tgt: containers[tgt].item(1)
   });
   return wires.push(w);
 }
@@ -51,36 +68,38 @@ function connect(src,tgt){
 function createContainer(block){
   var c = new Y.Container({
     children: [
-      { align: {points:["tl", "lc"]} },
-      { align: {points:["tl", "rc"]} }
-    ],
+                { align: {points:["tl", "lc"]}, id: block.uid, label: "Input" },
+                { align: {points:["tl", "rc"]}, id: block.uid, label: "Output"  }
+              ],
+    inputs: ['integer'],
+    outputs: ['integer'],
     width: 300,
     height: 400,
+    xy: [block.position.left,block.position.top],
     render: layer,
-    xy: block.position,
     headerContent: block.name,
-    onDelete: function(){
-      console.log(block.uid + " was deleted!")
-    }
   });
-  return containers.push(c);
+  c.name = block.uid;
+  return containers[block.uid] = c;
 }
 
 
-function drawConnections(){
-  log("Paint loaded connections");
-  /*empty relations array to avoid data duplication*/
-  var tmp = relations;
-  relations = [];
-  /*paint connections*/
-  for (i in tmp) {
-    log("Line between " + tmp[i].source + " and " + tmp[i].target);
-    var relationship = new relation("uid" + tmp[i].source, "uid" + tmp[i].target);
+/* In this shitty and bad documented framework wireit does the connect event not longer exist.
+ * So I take the event, if two containers are connected. This fires an event for every container, I take the two events in a buffer and create a connection.
+ * After that, cBuffer is reset to wait for the next two events...
+ * This really sucks and is another reason to migrage away from wireit. But jsPlumb sucks too and so there are no more alternatives under MIT License. FML!
+ * */
+var cBuffer = [];
+function connectBuffer(container){
+  if(cBuffer.length<1){
+    cBuffer.push(container.name);
+  }else{
+    console.log(blocks[container.name]);
+    blocks[container.name].input.push(cBuffer[0]);
+    relations.push(new relation(cBuffer[0],container.name));
+    cBuffer = [];
+    return save(blocks,relations)
   }
-  return save(blocks,relations);
 }
-
-
-
 
 

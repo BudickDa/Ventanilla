@@ -1,3 +1,5 @@
+var blocks, relations;
+
 /*start when dom is ready*/
 $(document).ready(function(){
   /*paint available blocks*/
@@ -6,7 +8,6 @@ $(document).ready(function(){
     var menueBlock = new blockTemplates[i]();
     $("#blockStorage").append(menueBlock.backendMenue);
   }
-
   return initWireIt(initBackend);
 });
 function initBackend() {
@@ -51,32 +52,17 @@ function initBackend() {
   load(paintUi);
 }
 
-function paintUi(blocks,relations) {
+function paintUi(b,r) {
+  blocks = b;
+  relations = r
   //write render the blocks from the last session
   //Interfaces and logic then everything else have an higher priority
-  createBlocks(blocks,relations);
-
-
-  /*for(i in blocks){
-    if(blocks[i].type!=="Sensor"&&blocks[i].type!=="Actor"){
-      renderBlock(blocks[i], repaint);
-      updateBlock(blocks[i]);
-    }
-  }
-  for (i in blocks) {
-    if(blocks[i].type==="Sensor"||blocks[i].type==="Actor"){
-      renderBlock(blocks[i], repaint);
-      updateBlock(blocks[i]);
-    }
-  }*/
+  createBlocks(b,r);
 }
 
-function initUi() {/*
-
+function initUi() {
+  /*
   This has to go into lines at blocks...
-
-
-
   $("#sketch").on("click", ".deleteButton", function(){
     deleteBlock($(this).parent().data("uid"));
   });
@@ -87,10 +73,6 @@ function initUi() {/*
     }
   });*/
 }
-
-
-
-
 
 function createBlock(block, cb) {
   $.post("/registerBlock", {

@@ -36,6 +36,8 @@ Y.WiresDelegate.prototype = {
       var w = e;
       while(!!w._event) { w = w.details[0]; }
       this.addWire(w);
+      console.log(this);
+      connectBuffer(this);
    },
 
    _onRemoveWire: function (e) {
@@ -105,6 +107,7 @@ Y.WiresDelegate.prototype = {
             list.push(this._wires[i].getOtherTerminal(this));
          }
       }
+     console.log(list);
       return list;
    },
 
@@ -124,9 +127,5 @@ Y.WiresDelegate.prototype = {
    destructor: function () {
       this.destroyWires();
    }
-
-};
-
-
-
+  };
 }, '@VERSION@', {"requires": ["wire-base"]});

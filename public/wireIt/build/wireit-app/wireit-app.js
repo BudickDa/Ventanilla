@@ -8,7 +8,6 @@ YUI.add('wireit-app', function (Y, NAME) {
 // Saves WiringModel
 function LocalStorageSync(key) {
     var localStorage;
-
     if (!key) {
         Y.error('No storage key specified.');
     }

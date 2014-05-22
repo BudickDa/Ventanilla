@@ -20,7 +20,15 @@ YUI.add('container', function (Y, NAME) {
          * @private
          */
         _onCloseClick: function () {
+            console.log(this);
+            deleteBlock(this.name);
             this.destroy();
+        },
+
+        _dragged: function() {
+          /*save new position*/
+          blocks[this.name].position = {left:this.xy[0],top:this.xy[1]};
+          return save(blocks,relations);
         }
 
     }, {
