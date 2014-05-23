@@ -1,5 +1,3 @@
-var blocks, relations;
-
 /*start when dom is ready*/
 $(document).ready(function(){
   /*paint available blocks*/
@@ -33,28 +31,26 @@ function initBackend() {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],unique);
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),{},unique);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],unique);
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),{},unique);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique);
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),{},unique);
       } else if (type === "Logic") {
         var logicName = ui.helper.context.dataset.name;
-        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique);
+        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),{},unique);
       }
       blocks[uid] = block;
       return createBlock(block);
     }
   });
 
-  load(paintUi);
+  return load(blocks,relations,paintUi);
 }
 
 function paintUi(b,r) {
-  blocks = b;
-  relations = r
   //write render the blocks from the last session
   //Interfaces and logic then everything else have an higher priority
   createBlocks(b,r);

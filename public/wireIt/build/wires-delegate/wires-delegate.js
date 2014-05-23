@@ -34,9 +34,9 @@ Y.WiresDelegate.prototype = {
 
    _onAddWire: function (e) {
       var w = e;
+
       while(!!w._event) { w = w.details[0]; }
       this.addWire(w);
-      console.log(this);
       connectBuffer(this);
    },
 
@@ -44,6 +44,7 @@ Y.WiresDelegate.prototype = {
       var w = e;
       while(!!w._event) { w = w.details[0]; }
       this.removeWire(w);
+      disconnectBuffer(this);
    },
 
    /**
@@ -68,7 +69,6 @@ Y.WiresDelegate.prototype = {
       var index = Y.Array.indexOf(this._wires, wire);
 
       if( index != -1 ) {
-
          // Compact the array
          var w = this._wires;
          this._wires = [];
@@ -78,7 +78,6 @@ Y.WiresDelegate.prototype = {
          // Fire the event
          this.fire('removeWire', wire);
       }
-
    },
 
    /**
@@ -107,7 +106,6 @@ Y.WiresDelegate.prototype = {
             list.push(this._wires[i].getOtherTerminal(this));
          }
       }
-     console.log(list);
       return list;
    },
 

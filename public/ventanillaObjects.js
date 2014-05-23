@@ -1,7 +1,8 @@
 /*Input object defines the uid of the input block and the kind of input, that has to be extracted from the data object*/
-var Input = function(inputUid,inputKind){
-  this.uid = inputUid;
-  this.kind = inputKind;
+var Input = function(uid, pin, type){
+  this.uid = uid;
+  this.pin = pin;
+  this.type = type;
 }
 
 var Block = function (uid,position,type,name,system,hardware,input,unique) {
@@ -44,11 +45,19 @@ var Logic = function(logicType) {
 /*global helper functions*/
 
 /*contains relations between blocks in a relation object*/
-var relations = [];
+var relations = {};
 
-var relation = function(source,target){
-  this.source = source;
-  this.target = target;
+var relation = function(source, sourcePin, sourceType, target, targetPin, targetType){
+  this.source = {
+    source:source,    //uid of source
+    pin: sourcePin,   //terminal id of source
+    type: sourceType  //data type of source
+  }
+  this.target = {
+    target:target,     //uid of target
+    pin: targetPin,     //terminal id of target
+    type: targetType    //data type of target
+  };
 }
 /*here all the registered blocks are saved*/
 var blocks = {};
@@ -84,7 +93,7 @@ function loadUiBlock(uid,cb){
 * Loads relation and block data from localStorage..
 * Todo: Check if localStorage is available.
 */
-function load(cb){
+function load(blocks,relations,cb){
   if(localStorage.relations!==undefined){
     relations = JSON.parse(localStorage.relations);
   }
@@ -104,8 +113,6 @@ function load(cb){
 */
 function save(blocks,relations){
   log("Save to local storage");
-  log(blocks);
-  log(relations);
   localStorage.blocks = JSON.stringify(blocks);
   localStorage.relations = JSON.stringify(relations);
 }
@@ -113,7 +120,7 @@ function save(blocks,relations){
 /*
 * Deletes everything.
 */
-function deleteAll() {
+function deleteAll(blocks,relations) {
   if(!printWarning("This will delete all blocks and requires the application to be restarted. Do you really want to do this?")){
     return save(blocks,relations);
   }
@@ -121,8 +128,8 @@ function deleteAll() {
   for(i in blocks){
     uids.push(blocks[i].uid);
   }
-  blocks = [];
-  relations = [];
+  blocks = {};
+  relations ={};
   $("#sketch").html("");
   log("Delete all...");
   $.post('delete', {uids: uids});

@@ -1,10 +1,3 @@
-var uiConfig = {
-
-}
-
-var blocks, relations;
-
-var wires = [];
 var containers = {};
 var Y = YUI({filter:'raw'});
 
@@ -13,13 +6,9 @@ function initWireIt(cb) {
     layer = new Y.Layer({
       render: Y.one('#sketch')
     });
-    console.log(layer);
+
     myGraphic = new Y.Graphic();
     myGraphic.render("#sketch");
-
-    layer.on('addChild',function(e){
-      console.log(e);
-    });
 
     return cb();
   });
@@ -46,13 +35,11 @@ function createBlocks(b,r){
 function connectBlocks(r){
   relations = r;
   for(i in r){
-    connect(r[i].source,r[i].target);
+    connect(r[i].source.source,r[i].target.target);
   }
 }
 
 function connect(src,tgt){
-  console.log(containers[src]);
-  console.log(containers[tgt]);
   var w = myGraphic.addShape({
     type: Y.BezierWire,
     stroke: {
@@ -62,24 +49,27 @@ function connect(src,tgt){
     src: containers[src].item(1),
     tgt: containers[tgt].item(1)
   });
-  return wires.push(w);
+}
+
+function deleteConnections(id){
+  delete relations[id];
 }
 
 function createContainer(block){
   var c = new Y.Container({
     children: [
-                { align: {points:["tl", "lc"]}, id: block.uid, label: "Input" },
-                { align: {points:["tl", "rc"]}, id: block.uid, label: "Output"  }
+                { align: {name:"foobar"+block.uid,points:["tl", "lc"]}, groups:["Celsius"] },
+                { align: {name:"foobar"+block.uid,points:["tl", "rc"]}, groups:["Celsius"] }
               ],
-    inputs: ['integer'],
-    outputs: ['integer'],
     width: 300,
     height: 400,
     xy: [block.position.left,block.position.top],
     render: layer,
     headerContent: block.name,
+    bodyContent: blockTemplates.Ui(block)
   });
   c.name = block.uid;
+  //._dragged = function(){alert("adsffkl'jgre jklh  fghds")};
   return containers[block.uid] = c;
 }
 
@@ -92,14 +82,42 @@ function createContainer(block){
 var cBuffer = [];
 function connectBuffer(container){
   if(cBuffer.length<1){
-    cBuffer.push(container.name);
+    cBuffer.push(container);
   }else{
-    console.log(blocks[container.name]);
-    blocks[container.name].input.push(cBuffer[0]);
-    relations.push(new relation(cBuffer[0],container.name));
+    var tmp = cBuffer[0];
+    console.log(tmp);
     cBuffer = [];
+    var id =createWireId(tmp, container);
+    //source, sourcePin, sourceType, target, targetPin, targetType
+    relations[id] = new relation(tmp.name,1, "celsius", container.name, 0, "celsius");
+    console.log(container.name);
+    blocks[container.name].input[id] = new Input(tmp.name);
     return save(blocks,relations)
   }
 }
+
+var dcBuffer = [];
+function disconnectBuffer(container){
+  if(dcBuffer.length<1){
+    dcBuffer.push(container);
+  }else{
+    var tmp = dcBuffer[0];
+    dcBuffer = [];
+    var id =createWireId(tmp, container);
+    //source, sourcePin, sourceType, target, targetPin, targetType
+    delete relations[id];
+    delete blocks[container.name].input[id];
+    return save(blocks,relations)
+  }
+}
+
+
+/*
+ * Helper Functions...
+ * */
+function createWireId(src,tgt){
+   return src.name + "_" + tgt.name;
+}
+
 
 

@@ -30,6 +30,7 @@ var ContainerBase = Y.Base.create('container-base', Y.Overlay, [Y.WidgetParent, 
 
       this.drag.on('drag:drag', function () {
          this.redrawAllWires();
+              console.log("foo");
       }, this);
 
       // Make the overlay resizable
@@ -117,7 +118,6 @@ var ContainerBase = Y.Base.create('container-base', Y.Overlay, [Y.WidgetParent, 
    destructor: function () {
 
       this.drag.destroy();
-
       if(this.resize) {
          this.resize.destroy();
       }

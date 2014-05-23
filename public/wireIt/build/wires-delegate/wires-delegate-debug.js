@@ -87,6 +87,7 @@ Y.WiresDelegate.prototype = {
 
       if(this._wires) {
          Y.Array.each(this._wires, function (w) {
+           console.log(w);
             w.destroy();
          });
       }

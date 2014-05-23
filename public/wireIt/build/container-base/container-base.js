@@ -21,16 +21,21 @@ var ContainerBase = Y.Base.create('container-base', Y.Overlay, [Y.WidgetParent, 
     * @method renderUI
     */
    renderUI: function () {
-
+      var container = this;
       // make the overlay draggable
       this.drag = new Y.DD.Drag({
          node: this.get('boundingBox'),
          handles : [ this._findStdModSection(Y.WidgetStdMod.HEADER) ]
       });
-
       this.drag.on('drag:drag', function () {
+
         this.redrawAllWires();
       }, this);
+
+     this.drag.on('drag:end', function(){
+        blocks[container.name].position = {left:this.lastXY[0],top:this.lastXY[1]};
+        return save(blocks,relations);
+     });
 
       // Make the overlay resizable
       if(this.get('resizable')) {
@@ -80,7 +85,6 @@ var ContainerBase = Y.Base.create('container-base', Y.Overlay, [Y.WidgetParent, 
     * @method syncUI
     */
    syncUI: function () {
-
       // Align terminals
       var c = this;
       this.each(function (term) {
