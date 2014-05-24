@@ -24,23 +24,22 @@ function initBackend() {
       var name = ui.helper.context.dataset.name;
       var type = ui.helper.context.dataset.type;
       var unique = ui.helper.context.dataset.unique;
-
-      log(type);
+      var pins = JSON.parse(ui.helper.context.dataset.pins);
       //uid, position, type, name, system, hardware, input
       if (type === "Sensor") {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),{},unique);
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),{},unique,pins);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),{},unique);
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),{},unique,pins);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),{},unique);
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),{},unique,pins);
       } else if (type === "Logic") {
         var logicName = ui.helper.context.dataset.name;
-        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),{},unique);
+        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),{},unique,pins);
       }
       blocks[uid] = block;
       return createBlock(block);
@@ -84,7 +83,7 @@ function createBlock(block, cb) {
     }
   });
   save(blocks,relations);
-  return createContainer(block);
+  return createChildren(block);
 }
 function updateBlock(block){
   $.post("/registerBlock", {

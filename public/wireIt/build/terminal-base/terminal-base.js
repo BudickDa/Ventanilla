@@ -43,6 +43,8 @@ Y.TerminalBase = Y.Base.create("terminal-base", Y.Widget, [Y.WidgetChild, Y.Widg
    // add the connected class
    _onAddWire: function (e) {
       this.get('boundingBox').addClass(  this.getClassName("connected") );
+     console.log(this);
+     console.log(this.get('boundingBox'));
    },
 
    // override the WiresDelegate behavior which re-fires the event

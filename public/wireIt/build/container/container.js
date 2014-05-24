@@ -20,7 +20,6 @@ YUI.add('container', function (Y, NAME) {
          * @private
          */
         _onCloseClick: function () {
-            console.log(this);
             deleteBlock(this.name);
             this.destroy();
         },

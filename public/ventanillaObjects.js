@@ -5,7 +5,7 @@ var Input = function(uid, pin, type){
   this.type = type;
 }
 
-var Block = function (uid,position,type,name,system,hardware,input,unique) {
+var Block = function (uid,position,type,name,system,hardware,input,unique,pins) {
   this.uid = uid;
   //position of block in backend
   this.position = position;
@@ -18,6 +18,7 @@ var Block = function (uid,position,type,name,system,hardware,input,unique) {
   this.input = input;
   /*Blocks are unique for example: ArduinoBoards*/
   this.unique = unique;
+  this.pins = pins;
 }
 
 var Sensor = function (pin,freq,threshold) {

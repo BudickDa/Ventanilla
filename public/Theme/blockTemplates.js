@@ -13,12 +13,12 @@ var backendOuter = function(uid,blockTemplate,unique){
 }
 
 
+/*
+ * create a data-object and extract data from html template
+ */
+
 //Template for LD35
 blockTemplates.LD35 = function(block) {
-  if(block!==undefined){
-    log(block);
-    this.backendTemplate = backendOuter(block.uid, "<span class=\"title\">LD35</span><div class=\"output\"><div class=\"ep\" data-output=\"voltage\">Voltage</div><div class=\"ep\" data-output=\"celsius\">Celsius</div></div>",block.unique);
-  }
   this.frontendTemplate = function(data,pins) {
     var html = "";
     for(i in pins){
@@ -27,25 +27,19 @@ blockTemplates.LD35 = function(block) {
     return html;
   };
   this.backendMenue = function(){
-    return "<li class=\"LD35 sensor\" data-type=\"Sensor\" data-name=\"LD35\" data-system=\"arduino\" data-unique=\"false\">LD35</li>";
+    return "<li class=\"LD35 sensor\" data-type=\"Sensor\" data-name=\"LD35\" data-system=\"arduino\" data-unique=\"false\" data-pins='"+JSON.stringify([{data:'port',type:'input'},{data:'celsius',type:'output'},{data:'voltage',type:'output'}])+"'>LD35</li>";
   }
 };
 //Template for UI
 blockTemplates.Ui = function(block) {
-  if(block!==undefined){
-    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">UI</span><span class=\"link\"> <a href=\"/ui/" + block.uid + "\" title=\"zum Frontend\">go to Frontend</a></div>",block.unique);
-  }
   this.backendMenue = function(){
-    return "<li class=\"UI interface\" data-type=\"Ui\" data-name=\"Ui\" data-system=\"nodeJs\" data-unique=\"false\">UI</li>";
+    return "<li class=\"UI interface\" data-type=\"Ui\" data-name=\"Ui\" data-system=\"nodeJs\" data-unique=\"false\" data-pins='"+JSON.stringify([{data:'many',type:'input'}])+"' >UI</li>";
   }
 };
 //Template for arduino board
 blockTemplates.ArduinoUno = function(block) {
-  if(block!==undefined){
-    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Arduino Board</span><div class=\"output\"><div class=\"ep\" data-output=\"port\">Port</div></div></div>",block.unique);
-  }
-   this.backendMenue = function(){
-    return "<li class=\"arduino interface\" data-type=\"ArduinoUno\" data-name=\"ArduinoUno\" data-system=\"arduino\" data-port=\"/dev/ttyACM0\" data-unique=\"true\">Arduino Uno Board 1</li>";
+  this.backendMenue = function(){
+    return "<li class=\"arduino interface\" data-type=\"ArduinoUno\" data-name=\"ArduinoUno\" data-system=\"arduino\" data-port=\"/dev/ttyACM0\" data-unique=\"true\" data-pins='"+JSON.stringify([{data:'port',type:'output'}])+"'>Arduino Uno Board 1</li>";
   }
 };
 
@@ -54,11 +48,8 @@ blockTemplates.ArduinoUno = function(block) {
 
 //Template for logic add
 blockTemplates.Add = function(block) {
-  if(block!==undefined){
-    this.backendTemplate =  backendOuter(block.uid, "<span class=\"title\">Add</span><div class=\"output\"><div class=\"ep\" data-output=\"result\">Result</div></div>",block.unique);
-  }
-   this.backendMenue = function(){
-    return "<li class=\"logic logic\" data-type=\"Logic\" data-name=\"Add\" data-system=\"Logic\" data-unique=\"false\">Logic:Add</li>";
+  this.backendMenue = function(){
+    return "<li class=\"logic logic\" data-type=\"Logic\" data-name=\"Add\" data-system=\"Logic\" data-unique=\"false\" data-pins='"+JSON.stringify([{data:'integer',type:'output'}])+"' >Logic:Add</li>";
   }
 };
 

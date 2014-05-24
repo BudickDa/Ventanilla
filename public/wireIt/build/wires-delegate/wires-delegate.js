@@ -34,9 +34,9 @@ Y.WiresDelegate.prototype = {
 
    _onAddWire: function (e) {
       var w = e;
-
       while(!!w._event) { w = w.details[0]; }
       this.addWire(w);
+
       connectBuffer(this);
    },
 

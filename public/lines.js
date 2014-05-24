@@ -16,19 +16,23 @@ function initWireIt(cb) {
 
 function createBlocks(b,r){
   blocks = b;
+  relations = r;
   for(i in b){
     if(b[i].type!=="Sensor"&&b[i].type!=="Actor"){
-      createContainer(blocks[i]);
+      createChildren(blocks[i]);
       updateBlock(blocks[i]);
     }
   }
   for (i in b) {
     if(b[i].type==="Sensor"||b[i].type==="Actor"){
-      createContainer(blocks[i]);
+      createChildren(blocks[i]);
       updateBlock(blocks[i]);
     }
   }
-  return connectBlocks(r);
+  return setTimeout(function(){
+    console.log(containers);
+    connectBlocks(relations);
+  },2000);
 };
 
 
@@ -48,29 +52,42 @@ function connect(src,tgt){
     },
     src: containers[src].item(1),
     tgt: containers[tgt].item(1)
-  });
+   });
 }
 
 function deleteConnections(id){
   delete relations[id];
 }
 
-function createContainer(block){
+function createChildren(block){
+  var children = [];
+  for(i in block.pins){
+    if(block.pins[i].type==="input"){
+      children.push({id:i , align: {points:["tl", "lc"]}, groups:[block.pins[i]] });
+    }else{
+      children.push({id:i, align: {points:["tl", "rc"]}, groups:[block.pins[i]] });
+    }
+  }
+  return createContainer(block,children,function(b,c){
+    console.log(c);
+    containers[b.uid] = c;
+    console.log(containers[b.uid]);
+  });
+}
+
+function createContainer(block,children,cb){
+  console.log(children);
   var c = new Y.Container({
-    children: [
-                { align: {name:"foobar"+block.uid,points:["tl", "lc"]}, groups:["Celsius"] },
-                { align: {name:"foobar"+block.uid,points:["tl", "rc"]}, groups:["Celsius"] }
-              ],
-    width: 300,
-    height: 400,
+    children: children,
+    width: 200,
+    height: 80,
     xy: [block.position.left,block.position.top],
     render: layer,
     headerContent: block.name,
     bodyContent: blockTemplates.Ui(block)
   });
   c.name = block.uid;
-  //._dragged = function(){alert("adsffkl'jgre jklh  fghds")};
-  return containers[block.uid] = c;
+  return cb(block,c);
 }
 
 
@@ -85,13 +102,14 @@ function connectBuffer(container){
     cBuffer.push(container);
   }else{
     var tmp = cBuffer[0];
-    console.log(tmp);
     cBuffer = [];
+
     var id =createWireId(tmp, container);
+    console.log(tmp.get('boundingBox'));
+    var pinId = 1;
     //source, sourcePin, sourceType, target, targetPin, targetType
     relations[id] = new relation(tmp.name,1, "celsius", container.name, 0, "celsius");
-    console.log(container.name);
-    blocks[container.name].input[id] = new Input(tmp.name);
+    blocks[container.name].input[id] = new Input(tmp.name,pinId,block[tmp.name].pins[pinId]);
     return save(blocks,relations)
   }
 }
