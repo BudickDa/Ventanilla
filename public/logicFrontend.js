@@ -11,7 +11,6 @@ $(document).ready(function () {
 });
 
 function initVentanilla() {
-
   loadUiBlock(ui, function(block,blocks){
     return paintUi(block,blocks);
   });
@@ -37,6 +36,10 @@ function subscribeToBlock(uid,name) {
   io.on("uid" + uid, function (data) {
     $(".data.uid" + uid).html(blockTemplate.frontendTemplate(data));
   });
+}
+
+function getApi(){
+
 }
 
 

@@ -1,1 +1,0 @@
-YUI.add("container",function(e,t){"use strict";e.Container=e.Base.create("container",e.ContainerBase,[e.WidgetIcons],{_onCloseClick:function(){this.destroy()}},{ATTRS:{icons:{value:[{title:"close",click:"_onCloseClick",className:"ui-silk ui-silk-cancel"}]}}})},"@VERSION@",{requires:["container-base","widget-icons"],skinnable:!0});

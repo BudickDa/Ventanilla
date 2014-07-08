@@ -75,6 +75,17 @@ app.post('sync', function(req, res){
 
 
 
+app.post('/api', function(req, res){
+    var key = req.body.key;
+    if(key == 1234){
+        app.io.broadcast('api',req.body.value);
+        return res.json(200);
+    }else{
+        return res.json(403);
+    }
+});
+
+
 
 //delete sensors
 app.post('/delete', function(req, res){

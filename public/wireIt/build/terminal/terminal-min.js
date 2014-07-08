@@ -1,1 +1,0 @@
-YUI.add("terminal",function(e,t){"use strict";e.Terminal=e.Base.create("terminal",e.TerminalBase,[e.TerminalDragEdit,e.TerminalScissors,e.TerminalDDGroups])},"@VERSION@",{requires:["terminal-base","terminal-dragedit","terminal-scissors","terminal-ddgroups"],skinnable:!0});

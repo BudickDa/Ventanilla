@@ -32,6 +32,12 @@ a {
   text-align: center;
 }
 
+.pin{
+  height:15px;
+  width:15px;
+  background: blue;
+}
+
 
 .box{
   background: -webkit-gradient( linear, left top, left bottom, from(#ffffff), color-stop(0.50, #ffffff), to(#b5b5b5));
@@ -67,4 +73,69 @@ text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1)
 }
 .block{
   width:200px;height:200px;background:orange;position:absolute;z-index:10
+}
+
+.blockBody{
+  position:relative;
+
+}
+
+.blockBody .blockName{
+  position:relative;
+  top:0;
+  left:0;
+  text-align: center;
+  width: 200px;
+  font-size: 2em;
+}
+.pinList li{
+  list-style: none;
+  display: block;
+}
+
+.pinList{
+
+}
+.pinList{
+
+}
+
+.pinList.input{
+  position:relative;
+  top:0;
+  left:-35px;
+  height:135px;
+}
+.pinList.output{
+  position:relative;
+  top:-150px;
+  left:75px;
+  height:135px;
+}
+.pinList li{
+  width:80px;
+}
+.pinList li span{
+  width:65px;
+}
+.pinList.input li span{
+  display: block;
+  float:right;
+}
+.pinList.output li span{
+  display: block;
+  float:left;
+}
+.pinList.input .pin{
+  float:left;
+}
+
+.pinList.output .pin{
+  float: right;
+}
+
+
+/*js Plumb*/
+._jsPlumb_endpoint, svg{
+  z-index: 100;
 }
