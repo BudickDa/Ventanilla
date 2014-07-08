@@ -1,7 +1,0 @@
-{
-            "wires-delegate": {
-                "requires": [
-                    "wire-base"
-                ]
-            }
-         }

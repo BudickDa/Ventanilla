@@ -1,5 +1,0 @@
-{
-   "bidirectional-arrow-wire": {
-      "requires": ["wire-base"]
-   }
-}

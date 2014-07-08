@@ -1,7 +1,0 @@
-{
-            "textarea-container": {
-                "requires": [
-                    "container"
-                ]
-            }
-         }

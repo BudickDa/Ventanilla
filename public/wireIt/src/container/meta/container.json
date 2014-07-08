@@ -1,9 +1,0 @@
-{
-    "container": {
-        "requires": [
-            "container-base",
-            "widget-icons"
-        ],
-        "skinnable": true
-    }
-}
