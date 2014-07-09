@@ -19,22 +19,22 @@ function initVentanilla() {
 function paintUi(block,blocks) {
   blockUis = [];
   for(i in block.input){
-    registerRoute(block.input[i],blocks[block.input[i]].name);
+    log(block.input[i]);
+    registerRoute(block.input[i],blocks);
   }
 }
 
-function registerRoute(uid,name) {
-  if($("#upperuid"+uid).length===0){
-    $("#display").append(square(name, "uid" + uid));
-    return subscribeToBlock(uid,name);
+function registerRoute(pin,blocks) {
+  if($("#upper"+pin.pid).length===0){
+    $("#display").append(square(blocks[pin.uid].name, pin));
+    return subscribeToBlock(pin,blocks);
   }
 }
 
-function subscribeToBlock(uid,name) {
-  log("Subscribe to socket " + uid);
-  var blockTemplate = new blockTemplates[name](uid);
-  io.on("uid" + uid, function (data) {
-    $(".data.uid" + uid).html(blockTemplate.frontendTemplate(data));
+function subscribeToBlock(pin,blocks) {
+  var blockTemplate = new blockTemplates[blocks[pin.uid].name](pin.pid);
+  io.on("pid" + pin.pid, function (data) {
+    $(".data.pid" + pin.pid).html(blockTemplate.frontendTemplate(data));
   });
 }
 

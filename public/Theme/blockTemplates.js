@@ -89,7 +89,7 @@ blockTemplates.Add = function(block) {
  *  .bar => 2 * height = width
  *  over uid the value is set
  */
-var square = function(title, uid) {
-  return "<div class=\"item square\" id=\"upper"+uid+"\"><div class=\"title\">" + title + "</div><div class=\"data " + uid + "\">no values</div></div>";
+var square = function(title, pin) {
+  return "<div class=\"item square\" id=\"upper"+pin.pid+"\"><div class=\"title\">" + title + "</div><div class=\"pinName\">" + pin.type + "</div><div class=\"data " + pin.pid + "\">no values</div></div>";
 }
 
