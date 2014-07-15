@@ -37,16 +37,16 @@ function initBackend() {
         var pin = "A0";
         var freq = 250;
         var treshold = 1;
-        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),{},unique,pins);
+        var block = new Block(uid, ui.position, type, name, system, new Sensor(pin, freq, treshold),[],unique,pins);
       } else if (type === "ArduinoUno") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),{},unique,pins);
+        var block = new Block(uid, ui.position, type, name, system, new ArduinoUno(port),[],unique,pins);
       } else if (type === "Ui") {
         var port = ui.helper.context.dataset.port;
-        var block = new Block(uid, ui.position, type, name, system, new Ui(),{},unique,pins);
+        var block = new Block(uid, ui.position, type, name, system, new Ui(),[],unique,pins);
       } else if (type === "Logic") {
         var logicName = ui.helper.context.dataset.name;
-        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),{},unique,pins);
+        var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique,pins);
       }
       blocks[uid] = block;
       return createBlock(block);
@@ -65,7 +65,7 @@ function initUi() {
 function createBlock(block, cb) {
   $("#sketch").append(backendOuter(block));
   $.post("/registerBlock", {
-    blocks: [block],
+    block: block,
   }, function (err) {
     if (err) {
       log(err);
@@ -81,7 +81,7 @@ function createBlock(block, cb) {
 }
 function updateBlock(block){
   $.post("/registerBlock", {
-    blocks: [block],
+    block: block,
   }, function (err) {
     if (err) {
       log(err);
