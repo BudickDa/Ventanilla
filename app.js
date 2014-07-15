@@ -114,38 +114,37 @@ app.post('/delete', function(req, res){
 app.post('/registerBlock', function(req, res){
   try{
     //Block Object contains all the data we need
-    var postBlocks = req.body.blocks;
+    var block = req.body.block;
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
-  for(i in postBlocks){
-    var block = postBlocks[i];
-    try{
-      if(blocks[block.uid]!==undefined){
-        console.log("Update block "+block.uid);
-        if(block.input !== blocks[block.uid].input && blocks[block.uid].input !==undefined){
-          blocks[block.uid].input = block.input;
-        }
+
+  try{
+    if(blocks[block.uid]!==undefined){
+      if(blocks[block.uid].block.type !== "ArduinoUno"){
+        console.log("Delete old block "+block.uid);
+        delete blocks[block.uid];
       }
     }
-    catch(e){
-      console.log(e);
-      return res.json(e);
-    }
-    try{
-      console.log("Register block "+block.uid);
-      ventanilla.registerBlock(block,blocks,function(uid){
-        sendData(blocks[uid]);
-        //everything went better than expected
-        return res.json(false);
-      });
-    }catch(e){
-      console.log(e);
-      return res.json(e);
-    }
   }
+  catch(e){
+    console.log(e);
+    return res.json(e);
+  }
+  try{
+    console.log("Register block "+block.uid);
+    ventanilla.registerBlock(block,blocks,function(uid){
+      sendData(blocks[uid]);
+      //everything went better than expected
+      return res.json(false);
+    });
+  }catch(e){
+    console.log(e);
+    return res.json(e);
+  }
+
   return res.json(false);
 });
 
