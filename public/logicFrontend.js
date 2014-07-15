@@ -7,7 +7,7 @@ $(document).ready(function () {
   ui = $("#data").data("ui");
   io.emit("block");
   initVentanilla();
-  return setInterval(initVentanilla,1000);
+  return setInterval(initVentanilla,2000);
 });
 
 function initVentanilla() {
@@ -17,7 +17,7 @@ function initVentanilla() {
 }
 
 function paintUi(block,blocks) {
-  blockUis = [];
+  log("Blocks connected to Ui:");
   for(i in block.input){
     log(block.input[i]);
     registerRoute(block.input[i],blocks);

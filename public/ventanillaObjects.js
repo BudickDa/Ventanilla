@@ -99,6 +99,9 @@ function loadUiBlock(uid,cb){
     var blockData = JSON.parse(localStorage.blocks);
     var blocks = {};
     for(i in blockData){
+      if(blockData[i].input.length===0){
+        blockData[i].input = [];
+      }
       if(blockData[i].uid === uid){
         var uiBlock = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,blockData[i].input,blockData[i].unique,blockData[i].pins);
       }
@@ -118,7 +121,10 @@ function load(cb){
   if(localStorage.blocks!==undefined){
     var blockData = JSON.parse(localStorage.blocks);
     for(i in blockData){
-      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,[],blockData[i].unique,blockData[i].pins);
+      if(blockData[i].input.length===0){
+        blockData[i].input = [];
+      }
+      blocks[blockData[i].uid] = new Block(blockData[i].uid,blockData[i].position,blockData[i].type,blockData[i].name,blockData[i].system,blockData[i].hardware,blockData[i].input,blockData[i].unique,blockData[i].pins);
     }
   }
   log("Data was loaded");

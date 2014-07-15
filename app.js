@@ -45,32 +45,28 @@ app.get('/backend', function(req, res){
   res.render('backend');
 });
 
-app.post('sync', function(req, res){
+app.post('updateBlock', function(req, res){
   try{
     //Block Object contains all the data we need
-    var postBlocks = req.body.blocks;
+    var block = req.body.block;
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
-  for(i in postBlocks){
-    var block = postBlocks[i];
-    try{
-      if(blocks[block.uid]===block){
-        console.log("Syncing Block " + blocks[block.uid].uid);
-        ventanilla.registerBlock(block,function(uid){
-          sendData(blocks[uid]);
-        });
-      }
-    }catch(e){
-      console.log(e);
-      return res.json(e);
+  try{
+    if(blocks[block.uid]===block){
+      console.log("Nothing new at "+block.uid);
+    }else{
+      console.log("Syncing Block " + block.uid);
+      delete blocks[block.uid];
+      ventanilla.registerBlock(block);
     }
-    return res.json(false);
+  }catch(e){
+    console.log(e);
+    return res.json(e);
   }
-
-
+  return res.json(200,true);
 });
 
 
@@ -79,7 +75,7 @@ app.post('/api', function(req, res){
     var key = req.body.key;
     if(key == 1234){
         app.io.broadcast('api',req.body.value);
-        return res.json(200);
+        //return res.json(200,true);
     }else{
         return res.json(403);
     }
@@ -120,7 +116,6 @@ app.post('/registerBlock', function(req, res){
     console.log(e);
     return res.json(e);
   }
-
   try{
     if(blocks[block.uid]!==undefined){
       if(blocks[block.uid].block.type !== "ArduinoUno"){
@@ -134,53 +129,14 @@ app.post('/registerBlock', function(req, res){
     return res.json(e);
   }
   try{
-    console.log("Register block "+block.uid);
-    ventanilla.registerBlock(block,blocks,function(uid){
-      sendData(blocks[uid]);
-      //everything went better than expected
-      return res.json(false);
-    });
-  }catch(e){
-    console.log(e);
+    console.log("Will create " + block.name + " - recieved$");
+    ventanilla.registerBlock(block);
+  }
+  catch(e){
     return res.json(e);
   }
-
-  return res.json(false);
 });
 
-function sendData(block){
-  console.log("Generating route...")
-  try{
-    /*
-    * the new block object contains the old block object as object... this is a little bit akward.
-    */
-    console.log("Get Data from Block: "+block.block.uid);
-    if(block.block.type==="Sensor"){
-      console.log("This Block is a sensor.");
-      return sendSensorData(block);
-    }
-    else{
-    }
-  }catch(e){
-    console.log("Error in sendData in app.js: " + e);
-  }
-}
 
-function sendSensorData(block){
-  try{
-    block.on('data', function(){
-      try{
-        blocks[block.uid].value = this.output(this.value);
-        app.io.broadcast('uid'+block.uid,this.output(this.value));
-      }catch(e){
-        console.log("Error at sendSensorData in app.js: " + e);
-        return false;
-      }
-    });
-  }catch(e){
-    console.log("Error at sendSensorData in app.js: " + e);
-    return false;
-  }
 
-}
 
