@@ -49,7 +49,7 @@ function initBackend() {
         var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique,pins);
       }
       blocks[uid] = block;
-      return createBlock(block);
+      return createBlock(block,newBlock);
     }
   });
 
@@ -72,22 +72,10 @@ function createBlock(block, cb) {
     } else {
       log("Created Block " + block.uid);
       if(cb!==undefined){
-        return cb(block.uid);
+        return cb(block);
+      }else{
+        return save(blocks,relations);
       }
-    }
-  });
-  save(blocks,relations);
-  return newBlock(block);
-}
-function updateBlock(block){
-  $.post("/registerBlock", {
-    block: block,
-  }, function (err) {
-    if (err) {
-      log(err);
-    } else {
-      log("Updated Block " + block.uid);
-      return save(blocks,relations);
     }
   });
 }

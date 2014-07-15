@@ -77,8 +77,8 @@ function createConnection(source,target){
   }catch(e){
     log("Lines.js - Line 50: "+e);
   }
-  updateBlock(blocks[target.uid]);
-  return save(blocks,relations);
+  createBlock(blocks[target.uid]);
+  return createBlock(blocks[target.uid]);
 }
 
 function newBlock(block){
