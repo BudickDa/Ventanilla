@@ -11,11 +11,9 @@ var endpointOptions = function(isSource,isTarget){
 };
 
 function loadBlocks(blocks,relations){
-
-
   jsPlumb.setContainer($("#sketch"));
   for(i in blocks){
-    createBlock(blocks[i]);
+    createBlock(blocks[i],newBlock);
   }
   return connectBlocks(relations);
 }
@@ -54,7 +52,7 @@ function onDisconnect(info){
       targetBlock.input.splice(i);
     }
   }
-  registerBlock(targetBlock);
+  //registerBlock(targetBlock);
   return registerBlock(targetBlock);;
 }
 

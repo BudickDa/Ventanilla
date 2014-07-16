@@ -71,15 +71,14 @@ function createBlock(block, cb) {
   }, function (err) {
     if (err) {
       log(err);
-    } else {
-      log("Created Block " + block.uid);
-      if(cb!==undefined){
-        return cb(block);
-      }else{
-        return save(blocks,relations);
-      }
     }
   });
+  log("Created Block " + block.uid);
+  if(cb!==undefined){
+    return cb(block);
+  }else{
+    return save(blocks,relations);
+  }
 }
 
 
