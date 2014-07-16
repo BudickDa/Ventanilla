@@ -47,6 +47,8 @@ function initBackend() {
       } else if (type === "Logic") {
         var logicName = ui.helper.context.dataset.name;
         var block = new Block(uid, ui.position, type, name, system, new Logic(logicName),[],unique,pins);
+      } else if (type === "Api") {
+        var block = new Block(uid, ui.position, type, name, system, new Api(),[],unique,pins);
       }
       blocks[uid] = block;
       return createBlock(block);

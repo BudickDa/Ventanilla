@@ -5,7 +5,7 @@ var blockUis = {};
 //init UI
 $(document).ready(function () {
   ui = $("#data").data("ui");
-  io.emit("block");
+  //io.emit("block");
   initVentanilla();
   return setInterval(initVentanilla,2000);
 });
@@ -32,9 +32,8 @@ function registerRoute(pin,blocks) {
 }
 
 function subscribeToBlock(pin,blocks) {
-  var blockTemplate = new blockTemplates[blocks[pin.uid].name](pin.pid);
   io.on("pid" + pin.pid, function (data) {
-    $(".data.pid" + pin.pid).html(blockTemplate.frontendTemplate(data));
+    $(".data.pid" + pin.pid).html(data);
   });
 }
 

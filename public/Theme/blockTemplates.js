@@ -47,13 +47,6 @@ function writePins(pins,input){
 
 //Template for LD35
 blockTemplates.LD35 = function(block) {
-  this.frontendTemplate = function(data,pins) {
-    var html = "";
-    for(i in pins){
-      html += "<div class=\""+pins[i]+"\">" + data[pins[i]]+ "</div>";
-    }
-    return html;
-  };
   this.backendMenue = function(){
     return "<li class=\"LD35 sensor\" data-type=\"Sensor\" data-name=\"LD35\" data-system=\"arduino\" data-unique=\"false\" data-pins='"+JSON.stringify([new Pin(-1,-1,"pin","input"),new Pin(-1,-1,"celsius","output"),new Pin(-1,-1,"voltage","output")])+"'>LD35</li>";
   }
@@ -71,6 +64,12 @@ blockTemplates.ArduinoUno = function(block) {
   }
 };
 
+//Template for api
+blockTemplates.Api = function(block) {
+  this.backendMenue = function(){
+    return "<li class=\"Api interface\" data-type=\"Api\" data-name=\"Api\" data-system=\"nodejs\" data-unique=\"false\" data-pins='"+JSON.stringify([new Pin(-1,-1,"Incoming","output"),new Pin(-1,-1,"Send","input")])+"'>Api</li>";
+  }
+};
 
 
 
@@ -90,6 +89,6 @@ blockTemplates.Add = function(block) {
  *  over uid the value is set
  */
 var square = function(title, pin) {
-  return "<div class=\"item square\" id=\"upper"+pin.pid+"\"><div class=\"title\">" + title + "</div><div class=\"pinName\">" + pin.type + "</div><div class=\"data " + pin.pid + "\">no values</div></div>";
+  return "<div class=\"item square\" id=\"upper"+pin.pid+"\"><div class=\"title\">" + title + "</div><div class=\"pinName\">" + pin.type + "</div><div class=\"data pid" + pin.pid + "\"></div></div>";
 }
 

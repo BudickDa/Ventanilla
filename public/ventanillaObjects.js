@@ -54,6 +54,11 @@ var ArduinoUno = function (port) {
   this.port = port;
 }
 
+var Api = function (port) {
+  this.ip = prompt("Bitte Ip-Adresse des Ziels eingeben.");
+  this.key = prompt("Bitte Key des Ziels eingeben.");
+}
+
 var Ui = function() {  
 }
 var Port = function(port) {
