@@ -54,8 +54,8 @@ function onDisconnect(info){
       targetBlock.input.splice(i);
     }
   }
-  updateBlock(targetBlock);
-  return save(blocks,relations);
+  registerBlock(targetBlock);
+  return registerBlock(targetBlock);;
 }
 
 
