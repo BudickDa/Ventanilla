@@ -36,7 +36,7 @@ function writePins(pins,input){
     if(pins[i].direction===filter||filter===-1){
       list+="<li><span>"+pins[i].type+"</span><div data-uid=\""+pins[i].uid+"\" data-pid=\""+pins[i].pid+"\" data-pid=\""+pins[i].pid+"\" data-direction=\""+pins[i].direction+"\" data-type=\""+pins[i].type+"\" id=\"pid"+pins[i].pid+"\" class=\"pin\"></div></li>"
     }
-  }
+  }$
   return list+"</ul>";
 }
 
@@ -54,7 +54,7 @@ blockTemplates.LD35 = function(block) {
 //Template for UI
 blockTemplates.Ui = function(block) {
   this.backendMenue = function(){
-    return "<li class=\"UI interface\" data-type=\"Ui\" data-name=\"Ui\" data-system=\"nodeJs\" data-unique=\"false\" data-pins='"+JSON.stringify([new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input")])+"' >UI</li>";
+    return "<li class=\"UI interface\" data-type=\"Ui\" data-name=\"Ui\" data-system=\"nodejs\" data-unique=\"false\" data-pins='"+JSON.stringify([new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input"),new Pin(-1,-1,"anything","input")])+"' >UI</li>";
   }
 };
 //Template for arduino board

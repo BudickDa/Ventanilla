@@ -31,6 +31,7 @@ if ('development' == app.get('env')) {
 /*Init Ventanilla*/
 var ventanilla = require('ventanilla');
 blocks = {};
+apiInterfaces = {};
 ventanilla.init();
 /*Make app listen*/
 app.listen(app.get('port'), function(){
@@ -48,11 +49,8 @@ app.get('/backend', function(req, res){
 
 app.post('/api', function(req, res){
     var key = req.body.key;
-    if(key == 1234){
-        app.io.broadcast('api',req.body.value);
-        //return res.json(200,true);
-    }else{
-        return res.json(403);
+    if(apiInterfaces[key] !== undefined){
+        apiInterfaces[key](req.body.value);
     }
 });
 
