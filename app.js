@@ -50,9 +50,12 @@ app.get('/backend', function(req, res){
 app.post('/api', function(req, res){
     var key = req.body.key;
     if(apiInterfaces[key] !== undefined){
-      return res.json(apiInterfaces[key](req.body.value));
+      try{
+        return res.json(apiInterfaces[key](req.body.value));
+      }catch(e){
+        return res.json(500,{error:e});
+      }
     }else{
-      console.log(apiInterfaces);
       return res.json(404);
     }
 });
