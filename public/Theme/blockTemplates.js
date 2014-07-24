@@ -89,6 +89,6 @@ blockTemplates.Add = function(block) {
  *  over uid the value is set
  */
 var square = function(title, pin) {
-  return "<div class=\"item square\" id=\"upper"+pin.pid+"\"><div class=\"title\">" + title + "</div><div class=\"pinName\">" + pin.type + "</div><div class=\"data pid" + pin.pid + "\"></div></div>";
+  return "<div class=\"item square\" id=\"upper"+pin.pid+"\"><div class=\"title\">" + title + "</div><div class=\"pinName\">" + pin.type + ": </div><div class=\"data pid" + pin.pid + "\"></div></div>";
 }
 

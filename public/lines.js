@@ -1,11 +1,11 @@
 var endpointOptions = function(isSource,isTarget){
   return {
     anchor:"Center",
-    endpointStyle: { width:15, height:15, fillStyle: "#666" },
+    endpointStyle: { width:15, height:15, fillStyle: "#878b8f" },
     endpoint:"Rectangle",
-    paintStyle:{ width:15, height:15, fillStyle: "#666" },
+    paintStyle:{ width:15, height:15, fillStyle: "#878b8f" },
     isSource:isSource,
-    connectorStyle: {strokeStyle: "#666"},
+    connectorStyle: {strokeStyle: "#878b8f"},
     isTarget: isTarget
   };
 };
@@ -26,15 +26,16 @@ function connectBlocks(relations){
   //set events
   return jsPlumb.bind("connection", function(info,event){
     onConnect(info);
-    jsPlumb.bind("connectionDetached", function(info,event){
-      log(info);
-      onDisconnect(info);
+    return jsPlumb.bind("connectionDetached", function(info,event){
+      return onDisconnect(info);
     });
   });
 }
 
 
 function onDisconnect(info){
+  log("Block gets disconnected. Info:");
+  log(info);
   var sourcePid = info.source.dataset.pid;
   var targetPid = info.target.dataset.pid;
   var targetBlock = blocks[info.target.dataset.uid];
@@ -53,7 +54,7 @@ function onDisconnect(info){
     }
   }
   //registerBlock(targetBlock);
-  return registerBlock(targetBlock);;
+  return registerBlock(targetBlock,newBlock);
 }
 
 
@@ -75,8 +76,7 @@ function createConnection(source,target){
   }catch(e){
     log("Lines.js - Line 50: "+e);
   }
-  createBlock(blocks[target.uid]);
-  return createBlock(blocks[target.uid]);
+  return createBlock(blocks[target.uid],newBlock);
 }
 
 function newBlock(block){
