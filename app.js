@@ -30,18 +30,13 @@ if ('development' == app.get('env')) {
 
 /*Init Ventanilla*/
 var ventanilla = require('ventanilla');
-/*generated config*/
-var config = require('./config.json');
-
-var hardware = {};
-initVentanilla(app,hardware);
-
-
-
-/*foreach(board in config.boards){
-  foreach(item in board){    
-  }
-}*/
+blocks = {};
+apiInterfaces = {};
+ventanilla.init();
+/*Make app listen*/
+app.listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
 
 /*Routen*/
 app.get('/ui/:uid', function(req, res){
@@ -50,79 +45,77 @@ app.get('/ui/:uid', function(req, res){
 app.get('/backend', function(req, res){
   res.render('backend');
 });
+
+
+app.post('/api', function(req, res){
+    var key = req.body.key;
+    if(apiInterfaces[key] !== undefined){
+      try{
+        return res.json(apiInterfaces[key](req.body.value));
+      }catch(e){
+        return res.json(500,{error:e});
+      }
+    }else{
+      return res.json(404);
+    }
+});
+
+
+
+//delete sensors
+app.post('/delete', function(req, res){
+  var msg = "All blocks deleted.";
+  try{
+    //Block Object contains all the data we need
+    var uids = req.body.uids;
+  }
+  catch(e){
+    console.log(e);
+    msg = e;
+    return res.json(msg);
+  }
+  for(i in uids){
+    try{
+      delete blocks[uids[i]];
+      console.log("Block " + uids[i] + " deleted.")
+    }catch(e){
+      msg = e;
+    }
+  }
+  return res.json(msg);
+});
+
 //register Sensor
 app.post('/registerBlock', function(req, res){
   try{
     //Block Object contains all the data we need
     var block = req.body.block;
-    hardware.blocks[block.uid] = 
   }
   catch(e){
     console.log(e);
     return res.json(e);
   }
   try{
-    if(block.type === 'sensor'){
-      ventanilla.registerSensor(hardware,sensor,function(sensor){
-        console.log(sensor);
-        sendData(req,hardware,sensor);
-        //everything went better than expected
-        return res.json(false);
-      });
+    if(blocks[block.uid]!==undefined){
+      if(blocks[block.uid].block.type !== "ArduinoUno"){
+        console.log("Delete old block "+block.uid);
+        delete blocks[block.uid];
+      }
     }
-    else if(block.type === 'interface')
-  }catch(e){
+  }
+  catch(e){
     console.log(e);
+    return res.json(e);
+  }
+  try{
+    console.log("Will create " + block.name + " - recieved$");
+    ventanilla.registerBlock(block);
+  }
+  catch(e){
     return res.json(e);
   }
 });
 
-app.get('/reload', function(req,res){
-/*this should be secured someday!*/
-  hardware = {};
-  return initVentanilla(app);
-});
-//todo: comment
-//var block;
-app.io.route('block',function(req){
-  //block = req;
-});
 
-//todo: config on harddisk is no solution... I think we need a database to persist configurations made in the backend
-app.get('/config', function(req, res){
-  res.set('Cache-Control', 'no-cache');
-  fs.readFile('config.json', 'utf8', function (err, data) {
-    if (err) throw err;
-    config = JSON.parse(data);
-  });
-  return res.json(config);
-});
 
-//todo: comment
-function initVentanilla(app){
-  ventanilla.init(function(initHardware){
-    hardware = initHardware;
-    ventanilla.ready = true;
-    app.listen(app.get('port'), function(){
-      console.log('Express server listening on port ' + app.get('port'));
-    });
-  });
-}
-
-/*
-* Return route of arduino module. 
-* Input:
-*   - hardware: hardware object created by ventanilla
-*   - i: the uid of the board
-*   - j: the uid of the sensor
-*/
-function sendData(req,hardware,sensor){
-  console.log("Register Sensor: "+sensor.uid);
-  return sensor.on('data', function(){
-    //console.log(this.output(this.value));
-    req.io.broadcast('uid'+sensor.uid,this.output(this.value));
-  });
-}
-
-/*Make app listen*/
 

@@ -6,7 +6,7 @@ board = new five.Board();
 board.on("ready", function() {
 
   // Create a standard `led` hardware instance
-  led = new five.Led(9);
+  led = new five.Led(11);
 
   // pinMode is set to OUTPUT by default
 
@@ -27,7 +27,7 @@ board.on("ready", function() {
   led.fadeIn();
 
 
-  // Toggle the led after 10 seconds (shown in ms)
+  // Toggle the led after 5 seconds (shown in ms)
   this.wait(5000, function() {
 
     led.fadeOut();

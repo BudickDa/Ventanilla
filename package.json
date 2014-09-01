@@ -8,6 +8,7 @@
   "dependencies": {
     "express.io": "*",
     "stylus": "*",
-    "ejs": "*"
+    "ejs": "*",
+    "serialport": "*"
   }
 }
