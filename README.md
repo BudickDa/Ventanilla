@@ -1,9 +1,9 @@
-Ventanilla – Connects Sensors, Actors and Logic
+Ventanilla – Eine Software zur Vernetzung von Aktoren und Sensoren
 ===============================================
 
-Überblick über Ventanilla => http://www.budick.eu/ventanilla-intelligentes-vernetzen
+Überblick über Ventanilla => http://budick.eu/#ventanilla
 
-Dokumentation auf Deutsch => http://www.budick.eu/ventanilla-dokumentation
+Präsentation auf Deutsch => http://budick.eu/slideshows/ventanilla#/
 
 
 Overview
