@@ -5,6 +5,12 @@ Ventanilla – Eine Software zur Vernetzung von Aktoren und Sensoren
 
 Präsentation auf Deutsch => http://budick.eu/slideshows/ventanilla#/
 
+Installation
+========
+1. clone Project and go into directory
+2. execute startWindows.cmd or startLinux.sh
+3. open Browser and go to localhost:3000/backend
+4. Profit!!!
 
 Overview
 ========
