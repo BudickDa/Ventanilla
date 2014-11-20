@@ -24,7 +24,18 @@ var Pin = function(uid,pid,type,direction){
 }
 
 
-
+ /**
+        Creates a block-object
+        @param uid Int expected. It is the unique uid of the block.
+        @param position is an Object with the coordinates top and left.
+        @param type String expected. It is the datatype of the block (sensor, actor, interface, logic)
+        @param name String expected. It is is the name of the hardware (e.g. LD35 or arduinoUno)
+        @param system String expected. It iss the system of the block. The system helps to chose the module (e.g. ventanilla-arduino for system arduino)
+        @param hardware is a child of a hardware-object. For more details, look at the manual
+        @param input is List of Pin-objects, that input data into this block
+        @param unique Boolean expected. If true, this block can be used only once per sketch.
+        @param pins List of Pin expected. It contains all the pins, this block has.
+    */
 var Block = function (uid,position,type,name,system,hardware,input,unique,pins) {
   this.uid = uid;
   //position of block in backend
@@ -40,7 +51,12 @@ var Block = function (uid,position,type,name,system,hardware,input,unique,pins) 
   this.unique = unique;
   this.pins = pins;
 }
-
+/**
+        Creates a sensor-object
+        @param pin String expected. Name of the Pin on the board with which this sensor is connected.
+        @param freq Int expected. Frequenz of the data delivery.
+        @param threshold In expected. Minimal value of the difference between the last and the present value, that the data is sent.
+    */
 var Sensor = function (pin,freq,threshold) {
   //frequenz of sending data.
   this.pin = pin;
@@ -49,22 +65,39 @@ var Sensor = function (pin,freq,threshold) {
   //emits change events when the data has changed
   this.threshold = threshold;
 }
-
+/**
+        Creates a ArduinoUno-object
+        @param port String expected. The name of the Serial port, that is connected to the board.
+    */
 var ArduinoUno = function (port) {
   this.port = port;
 }
 
-var Api = function (port) {
+/**
+        Creates a api-object. Asks for IP for the target and a pre-shared key in the GUI.
+     */
+var Api = function () {
   this.ip = prompt("Bitte Ip-Adresse des Ziels eingeben.");
   this.key = prompt("Bitte Key des Ziels eingeben.");
 }
 
+/**
+  Creates an ui-object. Does not need any values. UIs only need a UID and the PIDs of the blocks, they get their data from. Both is saved in the block-object.
+*/
 var Ui = function() {  
 }
+/**
+  Creates an port-object. I have no idea why and if we need this...
+  @param port String expected. It is the name of the port.
+*/
 var Port = function(port) {
   this.port
 }
 
+/**
+  Creates an logic-object.
+  @param logicType String expected. The name decides which function manipulates the input value of the block.
+*/
 var Logic = function(logicType) {
   this.logicType = logicType;
 }
