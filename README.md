@@ -1,9 +1,9 @@
 Ventanilla – Eine Software zur Vernetzung von Aktoren und Sensoren
 ===============================================
 
-Überblick über Ventanilla => http://budick.eu/#ventanilla
+Überblick über Ventanilla => https://budick.eu/publications
 
-Präsentation auf Deutsch => http://budick.eu/slideshows/ventanilla#/
+Präsentation auf Deutsch => http://budick.eu/slideshows/ventanilla#/ (offline)
 
 Installation
 ========
