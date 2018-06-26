@@ -3,12 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "express.io": "*",
     "stylus": "*",
     "ejs": "*",
-    "serialport": "*"
-  }
+    "serialport": "*",
+    "snyk": "^1.85.0"
+  },
+  "snyk": true
 }
